@@ -19,6 +19,12 @@ impl DataBaseInterface {
                 }
             }
         }
-        return false;
+        false
+    }
+}
+
+impl Default for DataBaseInterface {
+    fn default() -> Self {
+        DataBaseInterface { users: Vec::new() }
     }
 }

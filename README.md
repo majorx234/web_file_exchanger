@@ -2,7 +2,7 @@
 - Webserver to help exchanging files
 - WIP
 
-# Usgae
+# Usage
 - not usable yet
 - `source server_conf.sh`
 - `cargo run`
@@ -20,4 +20,4 @@
 
 
 # References
-- uses forge sah256 implementation: https://github.com/brillout/forge-sha256/
+- uses forge sha256 implementation: https://github.com/brillout/forge-sha256/
