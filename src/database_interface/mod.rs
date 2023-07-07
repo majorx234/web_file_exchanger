@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct DataBaseInterface {
     users: Vec<(String, String)>,
 }
