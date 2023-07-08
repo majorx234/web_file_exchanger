@@ -1,6 +1,7 @@
 use axum::{
     extract::{Extension, Query},
-    response::{Html, IntoResponse},
+    middleware,
+    response::{Html, IntoResponse, Response},
     routing::{get, post},
     Json, Router,
 };
@@ -33,13 +34,21 @@ async fn main() {
     let routes_test = Router::new()
         .route("/hello", get(handler_hello))
         .route("/info", get(handler_info))
-        .layer(Extension(dbi))
         .merge(login::login_route())
-        .merge(static_web_page::frontend());
+        .merge(static_web_page::frontend())
+        .layer(Extension(dbi))
+        .layer(middleware::map_response(main_response_mapper));
+
     axum::Server::bind(&addr)
         .serve(routes_test.into_make_service())
         .await
         .expect("failed to start server");
+}
+
+async fn main_response_mapper(res: Response) -> Response {
+    println!("->> {:<12} - main_response_mapper", "RES_MAPPER");
+    println!();
+    res
 }
 
 async fn handler_hello() -> impl IntoResponse {
