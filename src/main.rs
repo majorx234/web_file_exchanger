@@ -7,8 +7,11 @@ use axum::{
 use serde::Deserialize;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
-    backend::Backend, config::Config, database_interface::DataBaseInterface, models::login::Login,
-    routers::static_web_page,
+    backend::Backend,
+    config::Config,
+    database_interface::DataBaseInterface,
+    models::user_login::UserLogin,
+    routers::{login, static_web_page},
 };
 
 #[tokio::main]
@@ -29,8 +32,8 @@ async fn main() {
     let routes_test = Router::new()
         .route("/hello", get(handler_hello))
         .route("/info", get(handler_info))
-        .route("/login", post(handler_login))
         .layer(Extension(dbi))
+        .merge(login::login_route())
         .merge(static_web_page::frontend());
     axum::Server::bind(&addr)
         .serve(routes_test.into_make_service())
@@ -52,9 +55,4 @@ async fn handler_info(Query(params): Query<Info>) -> impl IntoResponse {
     println!("->> {:12} - handler_info - {params:?}", "HANDLER");
     let my_info = params.info.as_deref().unwrap_or("None");
     Html(format!("hello, {my_info}"))
-}
-
-async fn handler_login(Json(params): Json<Login>) -> impl IntoResponse {
-    println!("->> {:12} - handler_login - {params:?}", "HANDLER");
-    Html(format!("hello, {}", params.get_user_name()))
 }

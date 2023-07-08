@@ -1,12 +1,12 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct Login {
+pub struct UserLogin {
     user_name: String,
     password_hash: String,
 }
 
-impl Login {
+impl UserLogin {
     pub fn get_user_name(&self) -> &str {
         &self.user_name[..]
     }
