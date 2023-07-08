@@ -10,6 +10,7 @@ use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database_interface::DataBaseInterface,
+    models::error::{Error, Result},
     models::user_login::UserLogin,
     routers::{login, static_web_page},
 };
