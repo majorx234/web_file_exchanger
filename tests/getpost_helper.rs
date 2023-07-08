@@ -10,10 +10,11 @@ async fn getpost_helper() -> Result<()> {
     hc.do_get("/info?info=foo").await?.print().await?;
     hc.do_post(
         "/login",
-        json!({"user_name" : "Horst", "password_hash": "123456789"}),
+        json!({"user_name" : "Heinz", "password_hash": "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6"}),
     )
     .await?
     .print()
     .await?;
+
     Ok(())
 }
