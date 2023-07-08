@@ -8,6 +8,7 @@ use serde::Deserialize;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
     backend::Backend, config::Config, database_interface::DataBaseInterface, models::login::Login,
+    routers::static_web_page,
 };
 
 #[tokio::main]
@@ -26,11 +27,11 @@ async fn main() {
     println!("addr: {}", addr);
 
     let routes_test = Router::new()
-        .route("/", get(handler_hello))
+        .route("/hello", get(handler_hello))
         .route("/info", get(handler_info))
         .route("/login", post(handler_login))
-        .layer(Extension(dbi));
-
+        .layer(Extension(dbi))
+        .merge(static_web_page::frontend());
     axum::Server::bind(&addr)
         .serve(routes_test.into_make_service())
         .await
@@ -50,7 +51,7 @@ pub struct Info {
 async fn handler_info(Query(params): Query<Info>) -> impl IntoResponse {
     println!("->> {:12} - handler_info - {params:?}", "HANDLER");
     let my_info = params.info.as_deref().unwrap_or("None");
-    Html("hello, {my_info}")
+    Html(format!("hello, {my_info}"))
 }
 
 async fn handler_login(Json(params): Json<Login>) -> impl IntoResponse {
