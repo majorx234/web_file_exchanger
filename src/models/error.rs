@@ -6,7 +6,9 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[derive(Debug)]
 pub enum Error {
     LoginFail,
-    AuthFail,
+    AuthFailNoAuthToken,
+    AuthFailTokenWrongFormat,
+    AuthFailTokenInvalid,
 }
 
 impl std::fmt::Display for Error {
@@ -24,7 +26,13 @@ impl IntoResponse for Error {
             Error::LoginFail => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "UNHANDLED_CLIENT_ERROR").into_response()
             }
-            Error::AuthFail => {
+            Error::AuthFailNoAuthToken => {
+                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
+            }
+            Error::AuthFailTokenWrongFormat => {
+                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
+            }
+            Error::AuthFailTokenInvalid => {
                 (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
             }
         }
