@@ -1,3 +1,4 @@
+use chrono::Duration;
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -8,14 +9,20 @@ pub struct Config {
     pub port: u32,
     pub database_url: String,
     pub frontend_dir_path: PathBuf,
+    pub jwt_secret: String,
+    pub jwt_expire_time: Duration,
 }
 
 impl Config {
     pub fn new() -> Config {
         let host_ip = std::env::var("HOST_IP").expect("HOST_IP not set");
         let port = std::env::var("PORT").expect("PORT not set");
+        let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET not set");
+        let jwt_expire_time = std::env::var("JWT_EXPIRE_TIME").expect("JWT_EXPIRE_TIME not set");
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set");
+
         let frontend_dir = std::env::var("FRONTEND_DIR").expect("FRONTEND_DIR not set");
+
         let mut frontend_dir_path = PathBuf::new();
         frontend_dir_path.push(frontend_dir);
         match frontend_dir_path.is_absolute() {
@@ -29,6 +36,8 @@ impl Config {
             port: port.parse::<u32>().unwrap(),
             database_url,
             frontend_dir_path,
+            jwt_secret: "test".to_string(),
+            jwt_expire_time: Duration::seconds(600),
         }
     }
     pub fn get_host_socket_addr(&self) -> SocketAddr {
