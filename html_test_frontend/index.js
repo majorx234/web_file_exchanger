@@ -43,10 +43,10 @@ function httpPost(endpoint_name, json_data, variable_context, response_handler, 
 function httpGetTest() {
     let variable_context = "get test: ";
     let response_handler = (response_text) => {
-        let json_data = JSON.parse(response_text);
-        outputToConsole(variable_context + json_data);
+        // let json_data = JSON.parse(response_text);
+        outputToConsole(variable_context + response_text);
     };
-    httpGet("get_test", variable_context, response_handler, token);
+    httpGet("hello", variable_context, response_handler, token);
 }
 
 function httpPostLogin() {
