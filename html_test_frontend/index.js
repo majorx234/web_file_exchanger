@@ -49,6 +49,15 @@ function httpGetTest() {
     httpGet("hello", variable_context, response_handler, token);
 }
 
+function httpGetInfo() {
+    let variable_context = "get info: ";
+    let response_handler = (response_text) => {
+        // let json_data = JSON.parse(response_text);
+        outputToConsole(variable_context + response_text);
+    };
+    httpGet("info", variable_context, response_handler, token);
+}
+
 function httpPostLogin() {
     let end_point_name = "login";
     let variable_context = "login: ";
@@ -62,6 +71,7 @@ function httpPostLogin() {
     let param_name = "login";
     let response_handler = (response_text) => {
         let json_data = JSON.parse(response_text);
+				token = json_data["token"];
         outputToConsole(variable_context + response_text);
     };
     httpPost(end_point_name, json_data, variable_context, response_handler);
@@ -77,6 +87,10 @@ document.getElementById("clear_button").onclick = function() {
 
 document.getElementById("get_test_button").onclick = function() {
     httpGetTest();
+};
+
+document.getElementById("get_info_button").onclick = function() {
+    httpGetInfo();
 };
 
 document.getElementById("login_button").onclick = function() {
