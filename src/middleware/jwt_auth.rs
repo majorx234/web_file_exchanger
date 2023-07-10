@@ -28,6 +28,7 @@ pub async fn auth<B>(req: Request<B>, next: Next<B>) -> Result<Response> {
         });
     match token {
         Some(token) => {
+            println!("found token: {}", token);
             match parse_token(token) {
                 Ok((user, exp)) => {
                     println!("token valid user: {user} exp: {exp}");

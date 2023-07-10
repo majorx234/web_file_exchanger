@@ -35,7 +35,7 @@ pub async fn handler_login(Json(user_login): Json<UserLogin>) -> Result<Json<Val
         let token = encode(
             &Header::default(),
             &claims,
-            &EncodingKey::from_secret(Config::new().jwt_secret.as_ref()),
+            &EncodingKey::from_secret(Config::new().jwt_secret.as_bytes()),
         )
         .unwrap();
         Ok(Json(json!({

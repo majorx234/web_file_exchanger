@@ -11,9 +11,7 @@ use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database_interface::DataBaseInterface,
-    models::error::{Error, Result},
-    models::user_login::UserLogin,
-    routers::{login, static_web_page},
+    routers::{info, login, static_web_page},
 };
 
 #[tokio::main]
@@ -33,8 +31,8 @@ async fn main() {
 
     let routes_test = Router::new()
         .route("/hello", get(handler_hello))
-        .route("/info", get(handler_info))
-        .merge(login::login_route())
+        .merge(login::get_route())
+        .merge(info::get_route())
         .merge(static_web_page::frontend())
         .layer(Extension(dbi))
         .layer(middleware::map_response(main_response_mapper));
@@ -54,15 +52,4 @@ async fn main_response_mapper(res: Response) -> Response {
 async fn handler_hello() -> impl IntoResponse {
     println!("->> {:12} - handler_hello", "HANDLER");
     Html("hello, world")
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Info {
-    info: Option<String>,
-}
-
-async fn handler_info(Query(params): Query<Info>) -> impl IntoResponse {
-    println!("->> {:12} - handler_info - {params:?}", "HANDLER");
-    let my_info = params.info.as_deref().unwrap_or("None");
-    Html(format!("hello, {my_info}"))
 }
