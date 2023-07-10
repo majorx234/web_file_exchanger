@@ -16,6 +16,7 @@ use axum::{
 };
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use serde_json::{json, Value};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 pub fn get_route() -> Router {
     Router::new().route("/login", post(handler_login))
@@ -28,9 +29,12 @@ pub async fn handler_login(Json(user_login): Json<UserLogin>) -> Result<Json<Val
         && user_login.get_password_hash()
             == "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6"
     {
+        let elapse_since_epoch =
+            (SystemTime::now() + Duration::from_secs(300)).duration_since(UNIX_EPOCH);
+
         let claims = Claims {
             user: user_login.get_user_name().to_string(),
-            exp: "2024-01-01".to_string(),
+            exp: elapse_since_epoch.unwrap().as_secs() as usize,
         };
         let token = encode(
             &Header::default(),

@@ -47,7 +47,7 @@ pub async fn auth<B>(req: Request<B>, next: Next<B>) -> Result<Response> {
 /// - header :{"type":"jwt","alg":"HS256"}
 /// - payload: {"user":"<username","exp":"<exp-time>" }
 /// Returns (user_id, expiration)
-fn parse_token(jwt_token: String) -> Result<(String, String)> {
+fn parse_token(jwt_token: String) -> Result<(String, usize)> {
     let token_header = match jsonwebtoken::decode_header(&jwt_token) {
         Ok(token_header) => token_header,
         Err(_) => {
@@ -61,7 +61,8 @@ fn parse_token(jwt_token: String) -> Result<(String, String)> {
         &Validation::new(token_header.alg),
     ) {
         Ok(claims) => claims.claims,
-        Err(_) => {
+        Err(err) => {
+            println! {"Error_message: {err}"};
             return Err(Error::AuthFailTokenInvalid);
         }
     };
