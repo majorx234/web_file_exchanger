@@ -9,7 +9,7 @@ pub struct Config {
     pub port: u32,
     pub database_url: String,
     pub frontend_dir_path: PathBuf,
-    pub file_store_dir: PathBuf,
+    pub file_store_dir_path: PathBuf,
     pub jwt_secret: String,
     pub jwt_expire_time: Duration,
 }
@@ -38,7 +38,7 @@ impl Config {
             port: port.parse::<u32>().unwrap(),
             database_url,
             frontend_dir_path,
-            file_store_dir: file_store_dir.into(),
+            file_store_dir_path: file_store_dir.into(),
             jwt_secret: "test".to_string(),
             jwt_expire_time: Duration::seconds(600),
         }
@@ -49,5 +49,8 @@ impl Config {
 
     pub fn get_frontend_dir_path(&self) -> &Path {
         self.frontend_dir_path.as_path()
+    }
+    pub fn get_file_store_dir_path(&self) -> &Path {
+        &self.file_store_dir_path.as_path()
     }
 }
