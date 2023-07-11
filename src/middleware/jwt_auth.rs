@@ -66,7 +66,6 @@ fn parse_token(jwt_token: String) -> Result<(String, usize)> {
             return Err(Error::AuthFailTokenInvalid);
         }
     };
-    // TODO Check exp time
     // TODO Check if user exist in database
     /*
         let user = match get_user_by_ref(user_ref, app_state.db_pool) {

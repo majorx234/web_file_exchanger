@@ -12,12 +12,18 @@
   - `HOST_IP` - ip
   - `PORT` - port
   - `DATABSE_URL` - not used
+  - `FRONTEND_DIR` - directory of web application
+  - `FILE_STORE_DIR` - directories of file store
+  - `JWT_SECRET` - password to sign tokens
+  - `JWT_EXPIRE_TIME` - expiretime of token
 
 # ToDo
-- add axum server
-- add Endpoints
 - login System for users
-
+- add Endpoints for:
+  - list dir
+  - dir navigation
+  - file download
+  - file upload
 
 # References
 - uses forge sha256 implementation: https://github.com/brillout/forge-sha256/

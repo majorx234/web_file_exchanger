@@ -9,6 +9,7 @@ pub struct Config {
     pub port: u32,
     pub database_url: String,
     pub frontend_dir_path: PathBuf,
+    pub file_store_dir: PathBuf,
     pub jwt_secret: String,
     pub jwt_expire_time: Duration,
 }
@@ -31,11 +32,13 @@ impl Config {
                 frontend_dir_path = std::env::current_dir().unwrap().join(frontend_dir_path);
             }
         };
+        let file_store_dir = std::env::var("FILE_STORE_DIR").expect("FILE_STORE_DIR not set");
         Config {
             host_ip,
             port: port.parse::<u32>().unwrap(),
             database_url,
             frontend_dir_path,
+            file_store_dir: file_store_dir.into(),
             jwt_secret: "test".to_string(),
             jwt_expire_time: Duration::seconds(600),
         }
