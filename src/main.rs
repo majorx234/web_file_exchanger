@@ -11,7 +11,7 @@ use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database_interface::DataBaseInterface,
-    routers::{info, login, static_web_page},
+    routers::{files, info, login, static_web_page},
 };
 
 #[tokio::main]
@@ -33,6 +33,7 @@ async fn main() {
         .route("/hello", get(handler_hello))
         .merge(login::get_route())
         .merge(info::get_route())
+        .merge(files::get_route())
         .merge(static_web_page::frontend())
         .layer(Extension(dbi))
         .layer(middleware::map_response(main_response_mapper));
