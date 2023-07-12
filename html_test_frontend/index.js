@@ -58,6 +58,16 @@ function httpGetInfo() {
     httpGet("info", variable_context, response_handler, token);
 }
 
+function httpGetLsDirectories() {
+    let variable_context = "get ls directory: ";
+    let response_handler = (response_text) => {
+        // let json_data = JSON.parse(response_text);
+        outputToConsole(variable_context + response_text);
+    };
+    httpGet("files", variable_context, response_handler, token);
+}
+
+
 function httpPostLogin() {
     let end_point_name = "login";
     let variable_context = "login: ";
@@ -91,6 +101,10 @@ document.getElementById("get_test_button").onclick = function() {
 
 document.getElementById("get_info_button").onclick = function() {
     httpGetInfo();
+};
+
+document.getElementById("get_ls_directories_button").onclick = function() {
+    httpGetLsDirectories();
 };
 
 document.getElementById("login_button").onclick = function() {
