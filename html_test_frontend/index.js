@@ -23,7 +23,7 @@ function httpGet(endpoint_name, variable_context, response_handler, token) {
     xmlHttp.send(null);
 }
 
-function httpPost(endpoint_name, data, variable_context, response_handler, token) {
+function httpPost(endpoint_name, data, variable_context, response_handler, token, data_type="json") {
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -32,7 +32,10 @@ function httpPost(endpoint_name, data, variable_context, response_handler, token
     };
     let endpoint = "http://" + location.hostname + ":8080/" + endpoint_name;
     xmlHttp.open("POST", endpoint, true);
-    xmlHttp.setRequestHeader('Content-type', 'application/json');
+		if (data_type == "json")
+        xmlHttp.setRequestHeader('Content-type', 'application/json');
+    if (data_type == "form_data")
+				xmlHttp.setRequestHeader('Content-type', 'multipart/form-data');
 		if (token) {
 				xmlHttp.setRequestHeader('Authorization', 'Bearer ' + token);
 		}
@@ -84,23 +87,26 @@ function httpPostLogin() {
         outputToConsole(variable_context + response_text);
     };
     let json_string = JSON.stringify(json_data);
-    httpPost(end_point_name, json_string, variable_context, response_handler);
+    httpPost(end_point_name, json_string, variable_context, response_handler, null, 'json');
 }
 
 function httpPostUpload(){
     let end_point_name = "upload";
     let variable_context = "upload: ";
-    let upload_to_files = document.getElementById("upload_file_input").files;
+    let upload_file_input = document.getElementById("upload_file_input");
+		
+    let fragmente = [];
     let upload_form_data = new FormData();
-		for (const file in upload_to_files) {
-		    upload_form_data.append(file)				
-		}
-
+		for (var i = 0, f; f = upload_file_input.files[i]; i++) {
+        fragmente.push('file: ' , f.name, ' type: (', f.type || 'n/a', ') - size: ', f.size, ' bytes');
+				upload_form_data.append("file"+i, f);
+    }
+		outputToConsole(fragmente);
     let response_handler = (response_text) => {
         let json_data = JSON.parse(response_text);
         outputToConsole(variable_context + response_text);
     };
-    httpPost(end_point_name, upload_form_data, variable_context, response_handler, token);
+    httpPost(end_point_name, upload_form_data, variable_context, response_handler, token, 'form_data');
 }
 
 function clearConsole() {
