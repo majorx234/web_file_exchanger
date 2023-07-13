@@ -23,7 +23,7 @@ function httpGet(endpoint_name, variable_context, response_handler, token) {
     xmlHttp.send(null);
 }
 
-function httpPost(endpoint_name, json_data, variable_context, response_handler, token) {
+function httpPost(endpoint_name, data, variable_context, response_handler, token) {
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -36,8 +36,7 @@ function httpPost(endpoint_name, json_data, variable_context, response_handler, 
 		if (token) {
 				xmlHttp.setRequestHeader('Authorization', 'Bearer ' + token);
 		}
-    let json_string = JSON.stringify(json_data);
-    xmlHttp.send(json_string);
+    xmlHttp.send(data);
 }
 
 function httpGetTest() {
@@ -84,7 +83,24 @@ function httpPostLogin() {
 				token = json_data["token"];
         outputToConsole(variable_context + response_text);
     };
-    httpPost(end_point_name, json_data, variable_context, response_handler);
+    let json_string = JSON.stringify(json_data);
+    httpPost(end_point_name, json_string, variable_context, response_handler);
+}
+
+function httpPostUpload(){
+    let end_point_name = "upload";
+    let variable_context = "upload: ";
+    let upload_to_files = document.getElementById("upload_file_input").files;
+    let upload_form_data = new FormData();
+		for (const file in upload_to_files) {
+		    upload_form_data.append(file)				
+		}
+
+    let response_handler = (response_text) => {
+        let json_data = JSON.parse(response_text);
+        outputToConsole(variable_context + response_text);
+    };
+    httpPost(end_point_name, upload_form_data, variable_context, response_handler, token);
 }
 
 function clearConsole() {
@@ -111,4 +127,7 @@ document.getElementById("login_button").onclick = function() {
     httpPostLogin();
 };
 
+document.getElementById("upload_button").onclick = function() {
+    httpPostUpload();
+}
 outputToConsole("init successful");
