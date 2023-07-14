@@ -22,6 +22,7 @@ tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 tower-http = { version = "0.4.1", features = ["fs"] }
 chrono = { version = "0.4.26" }
 jsonwebtoken = { version = "8.3.0" }
+async-trait = { version = "0.1.71"}
 # getpost_helper
 anyhow = { version = "1.0.71"}
 httpc-test = { version = "0.1.4" }
