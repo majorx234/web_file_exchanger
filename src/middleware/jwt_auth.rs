@@ -15,6 +15,7 @@ use axum::{
 use jsonwebtoken::{decode, DecodingKey, Validation};
 
 pub async fn auth<B>(req: Request<B>, next: Next<B>) -> Result<Response> {
+    println!("->> {:<12} - auth", "MIDDELWARE");
     let token = req
         .headers()
         .get(header::AUTHORIZATION)
