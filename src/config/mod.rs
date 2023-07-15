@@ -12,6 +12,7 @@ pub struct Config {
     pub file_store_dir_path: PathBuf,
     pub jwt_secret: String,
     pub jwt_expire_time: Duration,
+    pub rust_log: String,
 }
 
 impl Config {
@@ -33,6 +34,8 @@ impl Config {
             }
         };
         let file_store_dir = std::env::var("FILE_STORE_DIR").expect("FILE_STORE_DIR not set");
+        let rust_log =
+            std::env::var("RUST_LOG").unwrap_or_else(|_| "todo_axum=debug,tower_http=debug".into());
         Config {
             host_ip,
             port: port.parse::<u32>().unwrap(),
@@ -41,6 +44,7 @@ impl Config {
             file_store_dir_path: file_store_dir.into(),
             jwt_secret: "test".to_string(),
             jwt_expire_time: Duration::seconds(600),
+            rust_log,
         }
     }
     pub fn get_host_socket_addr(&self) -> SocketAddr {
@@ -52,5 +56,9 @@ impl Config {
     }
     pub fn get_file_store_dir_path(&self) -> &Path {
         &self.file_store_dir_path.as_path()
+    }
+
+    pub fn get_rust_log(&self) -> &str {
+        &self.rust_log
     }
 }

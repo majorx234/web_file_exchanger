@@ -14,6 +14,10 @@ use web_file_exchanger::{
     routers::{files, info, login, static_web_page},
 };
 
+use tower::ServiceBuilder;
+use tower_http::trace::TraceLayer;
+use tracing;
+
 #[tokio::main]
 async fn main() {
     let config = Config::new();
@@ -29,6 +33,11 @@ async fn main() {
     let addr = config.get_host_socket_addr();
     println!("addr: {}", addr);
 
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::EnvFilter::new(config.get_rust_log()))
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     let routes_test = Router::new()
         .route("/hello", get(handler_hello))
         .merge(login::get_route())
@@ -36,7 +45,12 @@ async fn main() {
         .merge(files::get_route())
         .merge(static_web_page::frontend())
         .layer(Extension(dbi))
-        .layer(middleware::map_response(main_response_mapper));
+        .layer(middleware::map_response(main_response_mapper))
+        .layer(
+            ServiceBuilder::new()
+                .layer(TraceLayer::new_for_http())
+                .into_inner(),
+        );
 
     axum::Server::bind(&addr)
         .serve(routes_test.into_make_service())
