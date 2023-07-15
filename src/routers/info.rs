@@ -1,6 +1,7 @@
 use std::array::from_fn;
 
 use crate::{
+    ctx::Ctx,
     middleware::jwt_auth::auth,
     models::error::{Error, Result},
 };
@@ -24,9 +25,11 @@ pub fn get_route() -> Router {
         .route_layer(middleware::from_fn(auth))
 }
 
-pub async fn handler_info(Query(params): Query<Info>) -> Result<Json<Value>> {
+pub async fn handler_info(ctx: Ctx, Query(params): Query<Info>) -> Result<Json<Value>> {
     println!("->> {:12} - handler_info - {params:?}", "HANDLER");
     let my_info = params.info.as_deref().unwrap_or("None");
 
-    Ok(Json(json!({ "msg": my_info })))
+    Ok(Json(
+        json!({ "msg": my_info, "who ask for info?": format!("user: {}",ctx.get_user_name()) }),
+    ))
 }

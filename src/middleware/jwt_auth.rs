@@ -1,5 +1,6 @@
 use crate::{
     config::Config,
+    ctx::Ctx,
     models::{
         error::{Error, Result},
         token::Claims,
@@ -14,41 +15,17 @@ use axum::{
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
 
-pub async fn auth<B>(req: Request<B>, next: Next<B>) -> Result<Response> {
+pub async fn auth<B>(ctx: Result<Ctx>, req: Request<B>, next: Next<B>) -> Result<Response> {
     println!("->> {:<12} - auth", "MIDDELWARE");
-    let token = req
-        .headers()
-        .get(header::AUTHORIZATION)
-        .and_then(|auth_header| auth_header.to_str().ok())
-        .and_then(|auth_value| {
-            if auth_value.starts_with("Bearer ") {
-                Some(auth_value[7..].to_owned())
-            } else {
-                None
-            }
-        });
-    match token {
-        Some(token) => {
-            println!("found token: {}", token);
-            match parse_token(token) {
-                Ok((user, exp)) => {
-                    println!("token valid user: {user} exp: {exp}");
-                    return Ok(next.run(req).await);
-                }
-                Err(error) => return Err(error),
-            };
-        }
-        None => {
-            return Err(Error::AuthFailNoAuthToken);
-        }
-    }
+    ctx?;
+    Ok(next.run(req).await)
 }
 
 /// Parse a token of format `base64(header).base64(payload).signature`
 /// - header :{"type":"jwt","alg":"HS256"}
 /// - payload: {"user":"<username","exp":"<exp-time>" }
 /// Returns (user_id, expiration)
-fn parse_token(jwt_token: String) -> Result<(String, usize)> {
+pub fn parse_token(jwt_token: String) -> Result<(String, usize)> {
     let token_header = match jsonwebtoken::decode_header(&jwt_token) {
         Ok(token_header) => token_header,
         Err(_) => {

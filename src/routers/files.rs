@@ -1,5 +1,6 @@
 use crate::{
     config::Config,
+    ctx::Ctx,
     middleware::jwt_auth::auth,
     models::error::{Error, Result},
     models::folder_structure::FolderStructure,
@@ -31,12 +32,12 @@ pub async fn handler_files_list() -> Result<Json<Value>> {
     Ok(Json(json!({ "msg": "files will come later" })))
 }
 
-async fn handler_upload(mut multipart: Multipart) -> Result<Json<Value>> {
+async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value>> {
     while let Some(mut field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+        let file_name = field.name().unwrap().to_string();
         let data = field.bytes().await.unwrap();
 
-        println!("Length of `{}` is {} bytes", name, data.len());
+        println!("Length of `{}` is {} bytes", file_name, data.len());
     }
     Ok(Json(json!({ "msg": "files upload niy" })))
 }
