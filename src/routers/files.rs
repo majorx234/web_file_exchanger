@@ -37,7 +37,12 @@ async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value
         let file_name = field.name().unwrap().to_string();
         let data = field.bytes().await.unwrap();
 
-        println!("Length of `{}` is {} bytes", file_name, data.len());
+        println!(
+            "user:{} upload file:Length of `{}` is {} bytes",
+            ctx.get_user_name(),
+            file_name,
+            data.len()
+        );
     }
     Ok(Json(json!({ "msg": "files upload niy" })))
 }
