@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{Extension, Query},
+    extract::{Extension, Query, State},
     middleware,
     response::{Html, IntoResponse, Response},
     routing::{get, post},
@@ -19,22 +19,12 @@ use web_file_exchanger::{
         resource_mapper::response_mapper,
     },
     routers::{files, info, login, static_web_page},
+    server_state::{ServerElements, ServerState},
 };
 
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 use tracing;
-
-struct ServerElements {
-    pub dbi: DataBaseInterface,
-}
-impl ServerElements {
-    fn new(dbi: DataBaseInterface) -> Self {
-        ServerElements { dbi }
-    }
-}
-
-type ServerState = Arc<ServerElements>;
 
 #[tokio::main]
 async fn main() {
@@ -73,7 +63,8 @@ async fn main() {
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
                 .into_inner(),
-        );
+        )
+        .with_state(server_state);
 
     axum::Server::bind(&addr)
         .serve(routes_all.into_make_service())
@@ -81,7 +72,7 @@ async fn main() {
         .expect("failed to start server");
 }
 
-async fn handler_hello() -> impl IntoResponse {
+async fn handler_hello(State(server_state): State<ServerState>) -> impl IntoResponse {
     println!("->> {:12} - handler_hello", "HANDLER");
     Html("hello, world")
 }

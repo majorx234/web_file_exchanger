@@ -4,6 +4,7 @@ use crate::{
     ctx::Ctx,
     middleware::jwt_auth::auth,
     models::error::{Error, Result},
+    server_state::ServerState,
 };
 use axum::{
     extract::{Extension, Query},
@@ -19,7 +20,7 @@ pub struct Info {
     info: Option<String>,
 }
 
-pub fn get_route() -> Router {
+pub fn get_route() -> Router<ServerState> {
     Router::new().route("/info", get(handler_info))
 }
 

@@ -5,6 +5,7 @@ use crate::{
         token::Claims,
         user_login::UserLogin,
     },
+    server_state::ServerState,
 };
 
 use axum::routing::get_service;
@@ -18,7 +19,7 @@ use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use serde_json::{json, Value};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-pub fn get_route() -> Router {
+pub fn get_route() -> Router<ServerState> {
     Router::new().route("/login", post(handler_login))
 }
 

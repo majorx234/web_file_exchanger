@@ -4,6 +4,7 @@ use crate::{
     middleware::jwt_auth::auth,
     models::error::{Error, Result},
     models::folder_structure::FolderStructure,
+    server_state::ServerState,
 };
 use axum::{
     extract::{multipart::Multipart, Extension, Query},
@@ -17,7 +18,7 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 
-pub fn get_route() -> Router {
+pub fn get_route() -> Router<ServerState> {
     Router::new()
         .route("/upload", post(handler_upload))
         .route("/files", get(handler_files_list))
