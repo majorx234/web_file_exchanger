@@ -30,7 +30,10 @@ use tracing;
 async fn main() {
     let config = Config::new();
     let mut dbi = DataBaseInterface::new();
-    dbi.add("Heinz".to_string(), "1234".to_string());
+    dbi.add(
+        "Heinz".to_string(),
+        "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6".to_string(),
+    );
 
     let backend = Backend::new();
     println!("web_file_exchanger_server: {}", backend.get_name());

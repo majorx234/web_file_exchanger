@@ -5,12 +5,12 @@ use crate::{
         token::Claims,
         user_login::UserLogin,
     },
-    server_state::ServerState,
+    server_state::{self, ServerState},
 };
 
 use axum::routing::get_service;
 use axum::{
-    extract::{Extension, Query},
+    extract::{Extension, Query, State},
     response::{Html, IntoResponse},
     routing::{get, post},
     Json, Router,
@@ -23,12 +23,15 @@ pub fn get_route() -> Router<ServerState> {
     Router::new().route("/login", post(handler_login))
 }
 
-pub async fn handler_login(Json(user_login): Json<UserLogin>) -> Result<Json<Value>> {
+pub async fn handler_login(
+    State(server_state): State<ServerState>,
+    Json(user_login): Json<UserLogin>,
+) -> Result<Json<Value>> {
     println!("->> {:12} - handler_login - {user_login:?}", "HANDLER");
     // TODO: Implement a real db/auth logic with JWT response
-    if user_login.get_user_name() == "Heinz"
-        && user_login.get_password_hash()
-            == "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6"
+    if server_state
+        .dbi
+        .compare_password(user_login.get_user_name(), user_login.get_password_hash())
     {
         let elapse_since_epoch =
             (SystemTime::now() + Duration::from_secs(300)).duration_since(UNIX_EPOCH);

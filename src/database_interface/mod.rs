@@ -12,7 +12,7 @@ impl DataBaseInterface {
         self.users.push((user_name, password));
     }
 
-    pub fn compare_password(&self, user_name: &String, password: &String) -> bool {
+    pub fn compare_password(&self, user_name: &str, password: &str) -> bool {
         for (user, psw) in self.users.iter() {
             if user == user_name {
                 if psw == password {
