@@ -11,6 +11,11 @@ use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database_interface::DataBaseInterface,
+    middleware::{
+        ctx_resolver::{self, ctx_resolver},
+        jwt_auth::auth,
+        resource_mapper::response_mapper,
+    },
     routers::{files, info, login, static_web_page},
 };
 
@@ -38,14 +43,19 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let routes_test = Router::new()
-        .route("/hello", get(handler_hello))
-        .merge(login::get_route())
+    let router_secure = Router::new()
         .merge(info::get_route())
         .merge(files::get_route())
-        .merge(static_web_page::frontend())
+        .route_layer(middleware::from_fn(auth))
+        .route_layer(middleware::from_fn(ctx_resolver));
+
+    let routes_all = Router::new()
+        .route("/hello", get(handler_hello))
+        .merge(login::get_route())
+        .merge(router_secure)
         .layer(Extension(dbi))
-        .layer(middleware::map_response(main_response_mapper))
+        .merge(static_web_page::frontend())
+        .layer(middleware::map_response(response_mapper))
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
@@ -53,15 +63,9 @@ async fn main() {
         );
 
     axum::Server::bind(&addr)
-        .serve(routes_test.into_make_service())
+        .serve(routes_all.into_make_service())
         .await
         .expect("failed to start server");
-}
-
-async fn main_response_mapper(res: Response) -> Response {
-    println!("->> {:<12} - main_response_mapper", "RES_MAPPER");
-    println!();
-    res
 }
 
 async fn handler_hello() -> impl IntoResponse {

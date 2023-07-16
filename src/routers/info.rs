@@ -20,9 +20,7 @@ pub struct Info {
 }
 
 pub fn get_route() -> Router {
-    Router::new()
-        .route("/info", get(handler_info))
-        .route_layer(middleware::from_fn(auth))
+    Router::new().route("/info", get(handler_info))
 }
 
 pub async fn handler_info(ctx: Ctx, Query(params): Query<Info>) -> Result<Json<Value>> {

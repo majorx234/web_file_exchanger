@@ -21,10 +21,10 @@ pub fn get_route() -> Router {
     Router::new()
         .route("/upload", post(handler_upload))
         .route("/files", get(handler_files_list))
-        .route_layer(middleware::from_fn(auth))
 }
 
-pub async fn handler_files_list() -> Result<Json<Value>> {
+pub async fn handler_files_list(ctx: Ctx) -> Result<Json<Value>> {
+    println!("->> {:12} - handler_files_list", "HANDLER");
     let paths = fs::read_dir(Config::new().get_file_store_dir_path()).unwrap();
     for path in paths {
         println!("Name: {}", path.unwrap().path().display())
@@ -33,6 +33,7 @@ pub async fn handler_files_list() -> Result<Json<Value>> {
 }
 
 async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value>> {
+    println!("->> {:12} - handler_upload", "HANDLER");
     while let Some(mut field) = multipart.next_field().await.unwrap() {
         let file_name = field.name().unwrap().to_string();
         let data = field.bytes().await.unwrap();

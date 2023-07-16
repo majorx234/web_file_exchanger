@@ -3,12 +3,13 @@ use axum::response::{IntoResponse, Response};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Error {
     LoginFail,
     AuthFailNoAuthToken,
     AuthFailTokenWrongFormat,
     AuthFailTokenInvalid,
+    AuthErrorCtxNotInRequestExt,
 }
 
 impl std::fmt::Display for Error {
@@ -33,6 +34,9 @@ impl IntoResponse for Error {
                 (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
             }
             Error::AuthFailTokenInvalid => {
+                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
+            }
+            Error::AuthErrorCtxNotInRequestExt => {
                 (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
             }
         }
