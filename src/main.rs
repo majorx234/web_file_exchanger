@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{
     extract::{Extension, Query},
     middleware,
@@ -23,6 +25,17 @@ use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 use tracing;
 
+struct ServerElements {
+    pub dbi: DataBaseInterface,
+}
+impl ServerElements {
+    fn new(dbi: DataBaseInterface) -> Self {
+        ServerElements { dbi }
+    }
+}
+
+type ServerState = Arc<ServerElements>;
+
 #[tokio::main]
 async fn main() {
     let config = Config::new();
@@ -35,6 +48,7 @@ async fn main() {
         "is Heinz in db? {}",
         dbi.compare_password(&"Heinz".to_string(), &"1234".to_string())
     );
+    let server_state = Arc::new(ServerElements::new(dbi));
     let addr = config.get_host_socket_addr();
     println!("addr: {}", addr);
 
@@ -53,7 +67,6 @@ async fn main() {
         .route("/hello", get(handler_hello))
         .merge(login::get_route())
         .merge(router_secure)
-        .layer(Extension(dbi))
         .merge(static_web_page::frontend())
         .layer(middleware::map_response(response_mapper))
         .layer(
