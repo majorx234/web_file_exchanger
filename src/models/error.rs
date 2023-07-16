@@ -3,13 +3,32 @@ use axum::response::{IntoResponse, Response};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, strum_macros::AsRefStr)]
 pub enum Error {
     LoginFail,
     AuthFailNoAuthToken,
     AuthFailTokenWrongFormat,
     AuthFailTokenInvalid,
     AuthErrorCtxNotInRequestExt,
+}
+
+impl Error {
+    pub fn client_status_and_error(&self) -> (StatusCode, ClientError) {
+        #[allow(unreachable_patterns)]
+        match self {
+            // - Auth
+            Self::AuthFailNoAuthToken
+            | Self::AuthFailTokenWrongFormat
+            | Self::AuthErrorCtxNotInRequestExt => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
+            // - Model niy
+
+            // - Fallback
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                ClientError::SERVICE_ERROR,
+            ),
+        }
+    }
 }
 
 impl std::fmt::Display for Error {
@@ -23,22 +42,17 @@ impl std::error::Error for Error {}
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         println!("->> {:12} - {self:?}", "INTO_RES");
-        match self {
-            Error::LoginFail => {
-                (StatusCode::INTERNAL_SERVER_ERROR, "UNHANDLED_CLIENT_ERROR").into_response()
-            }
-            Error::AuthFailNoAuthToken => {
-                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
-            }
-            Error::AuthFailTokenWrongFormat => {
-                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
-            }
-            Error::AuthFailTokenInvalid => {
-                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
-            }
-            Error::AuthErrorCtxNotInRequestExt => {
-                (StatusCode::UNAUTHORIZED, "UNAUTHORIZED_CLIENT_ERROR").into_response()
-            }
-        }
+        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        // Insert the Error in the response
+        response.extensions_mut().insert(self);
+        return response;
     }
+}
+
+#[derive(Debug, strum_macros::AsRefStr)]
+pub enum ClientError {
+    LOGIN_FAIL,
+    NO_AUTH,
+    INVALID_PARAMS,
+    SERVICE_ERROR,
 }

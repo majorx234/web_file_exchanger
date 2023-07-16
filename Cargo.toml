@@ -24,6 +24,8 @@ tower-http = { version = "0.4.1", features = ["fs","trace"] }
 chrono = { version = "0.4.26" }
 jsonwebtoken = { version = "8.3.0" }
 async-trait = { version = "0.1.71"}
+strum_macros = { version = "0.25.1"}
+uuid = { version = "1.4.0", features = ["v4"]}
 # getpost_helper
 anyhow = { version = "1.0.71"}
 httpc-test = { version = "0.1.4" }
