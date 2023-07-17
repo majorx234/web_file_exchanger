@@ -3,13 +3,13 @@ use std::sync::Arc;
 
 use crate::database::DataBaseInterface;
 
-pub struct ServerElements<'a> {
-    pub dbi: Box<dyn DataBaseInterface + Send + Sync + 'a>,
+pub struct ServerElements {
+    pub dbi: Box<dyn DataBaseInterface + Send + Sync + 'static>,
 }
-impl<'a> ServerElements<'a> {
-    pub fn new(dbi: Box<dyn DataBaseInterface + Send + Sync + 'a>) -> ServerElements<'a> {
+impl ServerElements {
+    pub fn new(dbi: Box<dyn DataBaseInterface + Send + Sync>) -> ServerElements {
         ServerElements { dbi }
     }
 }
 
-pub type ServerState<'a> = Arc<ServerElements<'a>>;
+pub type ServerState = Arc<ServerElements>;

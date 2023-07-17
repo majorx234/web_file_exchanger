@@ -75,7 +75,7 @@ async fn main() {
         .expect("failed to start server");
 }
 
-async fn handler_hello(State(server_state): State<ServerState<'_>>) -> impl IntoResponse {
+async fn handler_hello(State(server_state): State<ServerState>) -> impl IntoResponse {
     println!("->> {:12} - handler_hello", "HANDLER");
     Html("hello, world")
 }
