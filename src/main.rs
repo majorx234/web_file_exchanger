@@ -12,7 +12,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
     backend::Backend,
     config::Config,
-    database::{DataBaseInterface, TestDb},
+    database::{test_db::TestDb, DataBaseInterface},
     middleware::{
         ctx_resolver::{self, ctx_resolver},
         jwt_auth::auth,
