@@ -12,7 +12,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
     backend::Backend,
     config::Config,
-    database_interface::DataBaseInterface,
+    database::{DataBaseInterface, TestDb},
     middleware::{
         ctx_resolver::{self, ctx_resolver},
         jwt_auth::auth,
@@ -29,7 +29,7 @@ use tracing;
 #[tokio::main]
 async fn main() {
     let config = Config::new();
-    let mut dbi = DataBaseInterface::new();
+    let mut dbi = TestDb::new();
     dbi.add(
         "Heinz".to_string(),
         "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6".to_string(),
@@ -41,7 +41,7 @@ async fn main() {
         "is Heinz in db? {}",
         dbi.compare_password(&"Heinz".to_string(), &"1234".to_string())
     );
-    let server_state = Arc::new(ServerElements::new(dbi));
+    let server_state = Arc::new(ServerElements::new(Box::new(dbi)));
     let addr = config.get_host_socket_addr();
     println!("addr: {}", addr);
 
@@ -75,7 +75,7 @@ async fn main() {
         .expect("failed to start server");
 }
 
-async fn handler_hello(State(server_state): State<ServerState>) -> impl IntoResponse {
+async fn handler_hello(State(server_state): State<ServerState<'_>>) -> impl IntoResponse {
     println!("->> {:12} - handler_hello", "HANDLER");
     Html("hello, world")
 }

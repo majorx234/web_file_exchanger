@@ -20,7 +20,7 @@ pub struct Info {
     info: Option<String>,
 }
 
-pub fn get_route() -> Router<ServerState> {
+pub fn get_route() -> Router<ServerState<'static>> {
     Router::new().route("/info", get(handler_info))
 }
 

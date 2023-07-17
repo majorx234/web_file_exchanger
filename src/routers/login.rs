@@ -19,12 +19,12 @@ use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use serde_json::{json, Value};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-pub fn get_route() -> Router<ServerState> {
+pub fn get_route() -> Router<ServerState<'static>> {
     Router::new().route("/login", post(handler_login))
 }
 
 pub async fn handler_login(
-    State(server_state): State<ServerState>,
+    State(server_state): State<ServerState<'_>>,
     Json(user_login): Json<UserLogin>,
 ) -> Result<Json<Value>> {
     println!("->> {:12} - handler_login - {user_login:?}", "HANDLER");

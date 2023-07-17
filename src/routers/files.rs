@@ -18,7 +18,7 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 
-pub fn get_route() -> Router<ServerState> {
+pub fn get_route() -> Router<ServerState<'static>> {
     Router::new()
         .route("/upload", post(handler_upload))
         .route("/files", get(handler_files_list))

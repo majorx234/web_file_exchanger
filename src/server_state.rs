@@ -1,14 +1,15 @@
+use std::boxed::Box;
 use std::sync::Arc;
 
-use crate::database_interface::DataBaseInterface;
+use crate::database::DataBaseInterface;
 
-pub struct ServerElements {
-    pub dbi: DataBaseInterface,
+pub struct ServerElements<'a> {
+    pub dbi: Box<dyn DataBaseInterface + Send + Sync + 'a>,
 }
-impl ServerElements {
-    pub fn new(dbi: DataBaseInterface) -> Self {
+impl<'a> ServerElements<'a> {
+    pub fn new(dbi: Box<dyn DataBaseInterface + Send + Sync + 'a>) -> ServerElements<'a> {
         ServerElements { dbi }
     }
 }
 
-pub type ServerState = Arc<ServerElements>;
+pub type ServerState<'a> = Arc<ServerElements<'a>>;
