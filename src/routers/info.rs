@@ -1,17 +1,5 @@
-use std::array::from_fn;
-
-use crate::{
-    ctx::Ctx,
-    middleware::jwt_auth::auth,
-    models::error::{Error, Result},
-    server_state::ServerState,
-};
-use axum::{
-    extract::{Extension, Query},
-    middleware,
-    routing::get,
-    Json, Router,
-};
+use crate::{ctx::Ctx, models::error::Result, server_state::ServerState};
+use axum::{extract::Query, routing::get, Json, Router};
 use serde::Deserialize;
 use serde_json::{json, Value};
 

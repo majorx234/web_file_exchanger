@@ -42,8 +42,8 @@ impl Config {
             database_url,
             frontend_dir_path,
             file_store_dir_path: file_store_dir.into(),
-            jwt_secret: "test".to_string(),
-            jwt_expire_time: Duration::seconds(600),
+            jwt_secret,
+            jwt_expire_time: Duration::seconds(jwt_expire_time.parse::<i64>().unwrap()),
             rust_log,
         }
     }
@@ -55,7 +55,7 @@ impl Config {
         self.frontend_dir_path.as_path()
     }
     pub fn get_file_store_dir_path(&self) -> &Path {
-        &self.file_store_dir_path.as_path()
+        self.file_store_dir_path.as_path()
     }
 
     pub fn get_rust_log(&self) -> &str {

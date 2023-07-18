@@ -1,30 +1,24 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{Extension, Query, State},
+    extract::State,
     middleware,
-    response::{Html, IntoResponse, Response},
-    routing::{get, post},
-    Json, Router,
+    response::{Html, IntoResponse},
+    routing::get,
+    Router,
 };
-use serde::Deserialize;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database::{test_db::TestDb, DataBaseInterface},
-    middleware::{
-        ctx_resolver::{self, ctx_resolver},
-        jwt_auth::auth,
-        resource_mapper::response_mapper,
-    },
+    middleware::{ctx_resolver::ctx_resolver, jwt_auth::auth, resource_mapper::response_mapper},
     routers::{files, info, login, static_web_page},
     server_state::{ServerElements, ServerState},
 };
 
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
-use tracing;
 
 #[tokio::main]
 async fn main() {
@@ -75,7 +69,7 @@ async fn main() {
         .expect("failed to start server");
 }
 
-async fn handler_hello(State(server_state): State<ServerState>) -> impl IntoResponse {
+async fn handler_hello(State(_server_state): State<ServerState>) -> impl IntoResponse {
     println!("->> {:12} - handler_hello", "HANDLER");
     Html("hello, world")
 }

@@ -5,17 +5,11 @@ use crate::{
         token::Claims,
         user_login::UserLogin,
     },
-    server_state::{self, ServerState},
+    server_state::ServerState,
 };
 
-use axum::routing::get_service;
-use axum::{
-    extract::{Extension, Query, State},
-    response::{Html, IntoResponse},
-    routing::{get, post},
-    Json, Router,
-};
-use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
+use axum::{extract::State, routing::post, Json, Router};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::{json, Value};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -46,9 +40,11 @@ pub async fn handler_login(
             &EncodingKey::from_secret(Config::new().jwt_secret.as_bytes()),
         )
         .unwrap();
+
+        // TODO: Use DTO-Model to pass response
         Ok(Json(json!({
             "msg": format!("hello, {}", user_login.get_user_name()),
-                        "token":token
+            "token":token
         })))
     } else {
         Err(Error::LoginFail)

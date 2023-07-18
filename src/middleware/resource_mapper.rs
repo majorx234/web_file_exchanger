@@ -3,11 +3,8 @@ use axum::{
     response::{IntoResponse, Response},
     Json,
 };
-use http::status;
 use serde_json::json;
 use uuid::Uuid;
-
-use crate::models::error::ClientError;
 
 pub async fn response_mapper(res: Response) -> Response {
     println!("->> {:<12} - main_response_mapper", "RES_MAPPER");

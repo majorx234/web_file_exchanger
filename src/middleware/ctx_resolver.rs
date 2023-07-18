@@ -1,7 +1,4 @@
-use axum::{
-    middleware::Next,
-    response::{IntoResponse, Response},
-};
+use axum::{middleware::Next, response::Response};
 use http::{header, Request};
 
 use crate::{

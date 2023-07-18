@@ -6,13 +6,7 @@ use crate::{
         token::Claims,
     },
 };
-use axum::{
-    extract::State,
-    http::{header, Request, StatusCode},
-    middleware::Next,
-    response::{IntoResponse, Response},
-    Json,
-};
+use axum::{http::Request, middleware::Next, response::Response};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 
 pub async fn auth<B>(ctx: Result<Ctx>, req: Request<B>, next: Next<B>) -> Result<Response> {
@@ -33,7 +27,7 @@ pub fn parse_token(jwt_token: String) -> Result<(String, usize)> {
         }
     };
 
-    let user_claims = match jsonwebtoken::decode::<Claims>(
+    let user_claims = match decode::<Claims>(
         &jwt_token,
         &DecodingKey::from_secret(Config::new().jwt_secret.as_bytes()),
         &Validation::new(token_header.alg),

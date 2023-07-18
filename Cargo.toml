@@ -26,9 +26,15 @@ jsonwebtoken = { version = "8.3.0" }
 async-trait = { version = "0.1.71"}
 strum_macros = { version = "0.25.1"}
 uuid = { version = "1.4.0", features = ["v4"]}
+http = { version = "0.2.9"}
+futures-util = { version = "0.3.28" }
+
+[dev-dependencies]
+tower = { version = "0.4", features = ["util"] }
+hyper = { version = "0.14", features = ["full"] }
+rstest = "0.16"
+mockall = "0.11"
 # getpost_helper
 anyhow = { version = "1.0.71"}
 httpc-test = { version = "0.1.4" }
 reqwest = { version = "0.11.18" }
-http = { version = "0.2.9"}
-futures-util = { version = "0.3.28" }

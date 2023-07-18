@@ -1,20 +1,14 @@
 use crate::{
-    config::Config,
-    ctx::Ctx,
-    middleware::jwt_auth::auth,
-    models::error::{Error, Result},
-    models::folder_structure::FolderStructure,
+    config::Config, ctx::Ctx, models::error::Result, models::folder_structure::FolderStructure,
     server_state::ServerState,
 };
 use axum::{
-    extract::{multipart::Multipart, Extension, Query},
-    middleware,
+    extract::multipart::Multipart,
     routing::{get, post},
     Json, Router,
 };
 use futures_util::stream::StreamExt;
 
-use serde::Deserialize;
 use serde_json::{json, Value};
 use std::fs;
 
@@ -24,7 +18,7 @@ pub fn get_route() -> Router<ServerState> {
         .route("/files", get(handler_files_list))
 }
 
-pub async fn handler_files_list(ctx: Ctx) -> Result<Json<Value>> {
+pub async fn handler_files_list(_ctx: Ctx) -> Result<Json<Value>> {
     println!("->> {:12} - handler_files_list", "HANDLER");
     let paths = fs::read_dir(Config::new().get_file_store_dir_path()).unwrap();
     for path in paths {
@@ -35,7 +29,7 @@ pub async fn handler_files_list(ctx: Ctx) -> Result<Json<Value>> {
 
 async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value>> {
     println!("->> {:12} - handler_upload", "HANDLER");
-    while let Some(mut field) = multipart.next_field().await.unwrap() {
+    while let Some(field) = multipart.next_field().await.unwrap() {
         let file_name = field.name().unwrap().to_string();
         let data = field.bytes().await.unwrap();
 

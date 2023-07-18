@@ -1,13 +1,7 @@
 use crate::config::Config;
 use crate::server_state::ServerState;
 use axum::routing::get_service;
-use axum::{
-    extract::{Extension, Query},
-    response::{Html, IntoResponse},
-    routing::{get, post},
-    Json, Router,
-};
-use std::path::PathBuf;
+use axum::Router;
 use tower_http::services::ServeDir;
 
 pub fn frontend() -> Router<ServerState> {

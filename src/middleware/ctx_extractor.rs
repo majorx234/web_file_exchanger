@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use axum::extract::FromRequestParts;
-use http::{header, request::Parts};
+use http::request::Parts;
 
 use crate::{
     ctx::Ctx,
