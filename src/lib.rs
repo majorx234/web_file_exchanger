@@ -2,6 +2,7 @@ pub mod backend;
 pub mod config;
 pub mod ctx;
 pub mod database;
+pub mod log;
 pub mod middleware;
 pub mod models;
 pub mod routers;
