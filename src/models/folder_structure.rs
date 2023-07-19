@@ -1,7 +1,8 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FolderStructure {
-    pub folder: Vec<String>,
-    pub files: Vec<String>,
+    pub filename: String,
+    pub is_folder: bool,
+    pub children: Option<Vec<FolderStructure>>,
 }

@@ -1,5 +1,8 @@
 use crate::{
-    config::Config, ctx::Ctx, models::error::Result, models::folder_structure::FolderStructure,
+    config::Config,
+    ctx::Ctx,
+    models::folder_structure::FolderStructure,
+    models::{error::Result, fs_cmd::FsCmd},
     server_state::ServerState,
 };
 use axum::{
@@ -15,7 +18,7 @@ use std::fs;
 pub fn get_route() -> Router<ServerState> {
     Router::new()
         .route("/upload", post(handler_upload))
-        .route("/files", get(handler_files_list))
+        .route("/files", get(handler_files_list).post(list_folder))
 }
 
 pub async fn handler_files_list(_ctx: Ctx) -> Result<Json<Value>> {
@@ -25,6 +28,15 @@ pub async fn handler_files_list(_ctx: Ctx) -> Result<Json<Value>> {
         println!("Name: {}", path.unwrap().path().display())
     }
     Ok(Json(json!({ "msg": "files will come later" })))
+}
+
+async fn list_folder(_ctx: Ctx, Json(_fs_cmd): Json<FsCmd>) -> Result<Json<FolderStructure>> {
+    let folder_structure = FolderStructure {
+        filename: "test.txt".to_string(),
+        is_folder: false,
+        children: None,
+    };
+    Ok(Json(folder_structure))
 }
 
 async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value>> {
