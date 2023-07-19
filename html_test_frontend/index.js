@@ -110,9 +110,34 @@ function httpPostUpload(){
     httpPost(end_point_name, upload_form_data, variable_context, response_handler, token, 'form_data');
 }
 
+function httpPostCmdPrompt(cmd,path){
+		let variable_context = "post cmd: " + cmd +" path: " + path +" - ";
+    let json_data = {
+				cmd:cmd,
+				path:path,
+		};
+		let json_string = JSON.stringify(json_data);
+		let response_handler = (response_text) => {
+        let json_data = JSON.parse(response_text);
+        outputToConsole(variable_context + response_text);
+    };
+		httpPost("files", json_string, variable_context, response_handler, token);
+}
+
 function clearConsole() {
     document.getElementById("console").innerHTML = "";
 }
+
+document.getElementById("js-form").addEventListener('submit', e => {
+    e.preventDefault();
+    let command_line = document.getElementById("cmd_prompts").value.split(" ", 2);
+		if (command_line.length == 2) {
+        httpPostCmdPrompt(command_line[0],command_line[1]);
+		} else {
+				outputToConsole("error command hav to be 2 words");
+		}
+		return false;
+});
 
 document.getElementById("clear_button").onclick = function() {
     clearConsole();
