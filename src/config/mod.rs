@@ -34,6 +34,7 @@ impl Config {
             }
         };
         let file_store_dir = std::env::var("FILE_STORE_DIR").expect("FILE_STORE_DIR not set");
+        // todo set folder where executed
         let rust_log =
             std::env::var("RUST_LOG").unwrap_or_else(|_| "todo_axum=debug,tower_http=debug".into());
         Config {
