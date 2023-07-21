@@ -5,27 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>web_file_exchanger html_test_frontend</title>
     <link rel="stylesheet" href="style.css">
+		<script src="forge-sha256.min.js"></script>
   </head>
   <body>
-    <h1>web_file_exchanger html_test_frontend</h1>
-    <h2>Login</h2>
-    <input type="text" id="user_name_input">
-    <input type="text" id="password_input">
-    <button type="button" id="login_button">login</button>
-    <button type="button" id="get_test_button">get_test</button>
-    <button type="button" id="get_info_button">get_info</button>
-    <button type="button" id="get_ls_directories_button">get_ls_directory</button>
-		<button type="button" id="clear_button">clear</button>
-		<br></br>
-		<div>
-			<input name="myfile" id="upload_file_input" type="file" multiple></input>
-			<button type="button" id="upload_button">upload_file</button>
+		<div class="grid">
+			<header class="header">
+				<h1>web_file_exchanger html_test_frontend</h1>
+        <p>Login</p>
+        <input type="text" id="user_name_input">
+        <input type="text" id="password_input">
+        <button type="button" id="login_button">login</button>
+			</header>
+			<nav class="nav">
+		    <button type="button" id="get_test_button">get_test</button>
+        <button type="button" id="get_info_button">get_info</button>
+        <button type="button" id="get_ls_directories_button">get_ls_directory</button>
+		    <br></br>
+		    <div>
+			    <input name="myfile" id="upload_file_input" type="file" multiple></input>
+			    <button type="button" id="upload_button">upload_file</button>
+		    </div>
+        <form action="" class="js-form" id="js-form" >
+			    <input type="text" class="cmd_prompt" id="cmd_prompts"></input>
+		    </form>
+			</nav>
+			<main class="content">
+        <div id="folder_browser">
+          <div id="folder_details"></div>
+        </div>    
+      </main>
+      <aside class="aside">
+        <div id="folder_tree"></div>
+      </aside>
+			<footer class="footer">
+				<button type="button" id="clear_button">clear</button>
+        <div class="console" id="console"></div>
+			</footer>
 		</div>
-    <form action="" class="js-form" id="js-form" >
-			<input type="text" class="cmd_prompt" id="cmd_prompts"></input>
-		</form>
-    <div class="console" id="console"></div>
-    <script src="forge-sha256.min.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
