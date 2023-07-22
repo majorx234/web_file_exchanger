@@ -86,6 +86,7 @@ function httpPostLogin() {
         let json_data = JSON.parse(response_text);
 				token = json_data["token"];
         outputToConsole(variable_context + response_text);
+				init_folder_structure();
     };
     let json_string = JSON.stringify(json_data);
     httpPost(end_point_name, json_string, variable_context, response_handler, null, 'json');
@@ -110,7 +111,7 @@ function httpPostUpload(){
     httpPost(end_point_name, upload_form_data, variable_context, response_handler, token, 'form_data');
 }
 
-function httpPostCmdPrompt(cmd,path){
+function httpPostCmdPrompt(cmd,path, handler_fct = null, base_tag = null){
 		let variable_context = "post cmd: " + cmd +" path: " + path +" - ";
     let json_data = {
 				cmd:cmd,
@@ -119,7 +120,11 @@ function httpPostCmdPrompt(cmd,path){
 		let json_string = JSON.stringify(json_data);
 		let response_handler = (response_text) => {
         let json_data = JSON.parse(response_text);
-        outputToConsole(variable_context + response_text);
+				if (handler_fct) {
+						handler_fct(json_data, base_tag);
+				} else {
+            outputToConsole(variable_context + response_text);
+				}
     };
 		httpPost("files", json_string, variable_context, response_handler, token);
 }
@@ -128,11 +133,36 @@ function clearConsole() {
     document.getElementById("console").innerHTML = "";
 }
 
+function init_folder_structure() {
+		// main part:
+    // handle json: [{"filename":"README.md","is_folder":false,"children":null},...]
+    let list_fs_handler_function = (list_fs_json,base_tag) => {
+		    let fs_list_tag = document.createElement("ul");
+        fs_list_tag.classList.add("folder");
+		    for (fs_item in list_fs_json){
+				    let fs_item_tag = document.createElement("li");
+    			  let fs_item_summary = document.createElement("summary");
+		    	  let fs_item_label = document.createElement("label");
+			      fs_item_label.innerHTML = list_fs_json[fs_item]["filename"];
+			      // TODO
+			      // let onclick_tag_function = ...
+            // fs_item_label.onlick = onclick_tag_function;
+				    fs_item_summary.append(fs_item_label);
+            fs_item_tag.append(fs_item_summary);
+		        fs_list_tag.append(fs_item_tag);
+        }
+        base_tag.append(fs_list_tag);
+    };
+
+    let base_tag = document.getElementById("folder_tree");
+    httpPostCmdPrompt("ls","/",list_fs_handler_function, base_tag);
+}
+
 document.getElementById("js-form").addEventListener('submit', e => {
     e.preventDefault();
     let command_line = document.getElementById("cmd_prompts").value.split(" ", 2);
 		if (command_line.length == 2) {
-        httpPostCmdPrompt(command_line[0],command_line[1]);
+        httpPostCmdPrompt(command_line[0],command_line[1], null);
 		} else {
 				outputToConsole("error command hav to be 2 words");
 		}
@@ -163,3 +193,4 @@ document.getElementById("upload_button").onclick = function() {
     httpPostUpload();
 }
 outputToConsole("init successful");
+
