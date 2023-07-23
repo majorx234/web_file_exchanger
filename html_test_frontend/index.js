@@ -134,21 +134,49 @@ function clearConsole() {
     document.getElementById("console").innerHTML = "";
 }
 
-function createHtmlFromFolderStructure(list_fs_json) {
-    let fs_list_tag = document.createElement("ul");
+function createHtmlFromFolderStructure(list_fs_json, fs_list_tag, path) {
     fs_list_tag.classList.add("folder");
     for (fs_item in list_fs_json){
+        let fs_item_name = list_fs_json[fs_item]["filename"];
         let fs_item_tag = document.createElement("li");
-        let fs_item_summary = document.createElement("summary");
         let fs_item_label = document.createElement("label");
-        fs_item_label.innerHTML = list_fs_json[fs_item]["filename"];
-        // TODO
+        fs_item_label.innerHTML = fs_item_name;
+
+         // TODO
         // let onclick_tag_function = ...
         // fs_item_label.onlick = onclick_tag_function;
-        let fs_item_label_onlick_fct = (event) => {};
-        fs_item_label.onclick = fs_item_label_onlick_fct;
-        fs_item_summary.append(fs_item_label);
-        fs_item_tag.append(fs_item_summary);
+        if (list_fs_json[fs_item]["is_folder"]){
+            let new_fs_list_tag = document.createElement("ul");
+            let fs_item_label_onlick_fct = (event) => {};
+            // fs_item_label.onclick = fs_item_label_onlick_fct;
+
+            let fs_item_summary = document.createElement("summary");
+            let details_tag  = document.createElement("details");
+            let details_tag_onlick_fct = (event) => {
+                let new_path = path + fs_item_name + "/";
+                let list_fs_handler_function = (json_data, base_tag) => {
+                    let new_fs_list_tag = document.createElement("ul");
+                    new_fs_list_tag = createHtmlFromFolderStructure(json_data, new_fs_list_tag, new_path);
+                    // base_tag.innerHTML = '';
+                    let base_tag_children = base_tag.childNodes;
+                    base_tag_children.forEach(function(item){
+                        if(item.tagName != "SUMMARY"){
+                            base_tag.removeChild(item);
+                        }
+                    });
+                    base_tag.append(new_fs_list_tag);
+    };
+                httpPostCmdPrompt("ls",new_path,list_fs_handler_function, details_tag);
+            };
+            // details_tag.addEventListener("toggle", details_tag_onlick_fct);
+            fs_item_label.onclick = details_tag_onlick_fct;
+            fs_item_summary.append(fs_item_label);
+            details_tag.append(fs_item_summary);
+            // details_tag.append(new_fs_list_tag);
+            fs_item_tag.append(details_tag);
+        } else {
+            fs_item_tag.append(fs_item_label);
+        }
         fs_list_tag.append(fs_item_tag);
     }
     return fs_list_tag;
@@ -158,7 +186,8 @@ function init_folder_structure() {
     // main part:
     // handle json: [{"filename":"README.md","is_folder":false,"children":null},...]
     let list_fs_handler_function = (list_fs_json, base_tag) => {
-        let fs_list_tag = createHtmlFromFolderStructure(list_fs_json)
+        let fs_list_tag = document.createElement("ul");
+        fs_list_tag = createHtmlFromFolderStructure(list_fs_json, fs_list_tag, "/");
         base_tag.append(fs_list_tag);
     };
 
