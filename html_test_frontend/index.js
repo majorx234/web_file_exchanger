@@ -164,8 +164,12 @@ function createHtmlFromFolderStructure(list_fs_json, fs_list_tag, path) {
                             base_tag.removeChild(item);
                         }
                     });
+                    let folder_browser_tag = document.getElementById("folder_details");
+                    folder_browser_tag.innerHTML = "";
+                    let new_fs_list_tag2 = new_fs_list_tag.cloneNode(true);
+                    folder_browser_tag.append(new_fs_list_tag2);
                     base_tag.append(new_fs_list_tag);
-    };
+                };
                 httpPostCmdPrompt("ls",new_path,list_fs_handler_function, details_tag);
             };
             // details_tag.addEventListener("toggle", details_tag_onlick_fct);
