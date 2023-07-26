@@ -229,7 +229,7 @@ class FileBrowserComponent extends HTMLElement {
             e.preventDefault();
             let command_line = this.root.querySelector("#cmd_prompts").value.split(" ", 2);
             if (command_line.length == 2) {
-                httpPostCmdPrompt(command_line[0],command_line[1], null, this.token);
+                httpPostCmdPrompt(command_line[0],command_line[1], null, null, token);
             } else {
                 outputToConsole("error command hav to be 2 words");
             }
