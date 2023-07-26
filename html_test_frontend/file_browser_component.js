@@ -1,30 +1,30 @@
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
 <style>
-.grid {
+:host {
   display: grid;
   grid-template-rows: 150px auto auto 100px;
   grid-template-columns: repeat(10, 10%);
 }
 
-.grid > .nav {
+:host > .nav {
   grid-column:1 / 11;
   grid-row:1 / 2;
 }
 
-.grid > .content {
+:host > .content {
   grid-column:4/11;
   grid-row:2 / 5;
   text-align: left;
 }
 
-.grid > .aside {
+:host > .aside {
   grid-column:1 / 4;
   grid-row:2 /5;
   text-align: left;
 }
 
-.grid > .footer {
+:host > .footer {
   grid-column: 1 / 11;
   grid-row:5 / 6;
 }
