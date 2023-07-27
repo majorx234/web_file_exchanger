@@ -49,6 +49,9 @@ function httpPostLogin() {
         file_browser_tag.token = token;
         content_tag.innerHTML = "";
         content_tag.append(file_browser_tag);
+        file_browser_tag.addEventListener("log-event",(event) => {
+            outputToConsole(event.detail);
+        })
     };
     let json_string = JSON.stringify(json_data);
     httpPost(end_point_name, json_string, variable_context, response_handler, null, 'json');

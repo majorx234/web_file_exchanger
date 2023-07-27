@@ -61,7 +61,7 @@ class FileBrowserComponent extends HTMLElement {
     }
 
     logEvent(log_msg) {
-        this.dispatchEvent(new CustomEvent("log-event",{msg:log_msg} ));
+        this.dispatchEvent(new CustomEvent("log-event",{detail : log_msg} ));
     }
 
     httpPostUpload() {
@@ -72,7 +72,7 @@ class FileBrowserComponent extends HTMLElement {
         let fragmente = [];
         let upload_form_data = new FormData();
         for (var i = 0, f; f = upload_file_input.files[i]; i++) {
-            fragmente.push('file: ' , f.name, ' type: (', f.type || 'n/a', ') - size: ', f.size, ' bytes');
+            fragmente.push('file: ' + f.name + ' type: (' + f.type + ') - size: ' + f.size + ' bytes');
             upload_form_data.append("file"+i, f);
         }
         this.logEvent(fragmente);

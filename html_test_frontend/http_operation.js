@@ -27,9 +27,9 @@ export function httpPost(endpoint_name, data, variable_context, response_handler
         // if (data_type == "form_data")
         //        xmlHttp.setRequestHeader('Content-type', 'multipart/form-data');
         // browser choose it by itself
-        if (token) {
-            xmlHttp.setRequestHeader('Authorization', 'Bearer ' + token);
-        }
+    }
+    if (token) {
+        xmlHttp.setRequestHeader('Authorization', 'Bearer ' + token);
     }
     xmlHttp.send(data);
 }
