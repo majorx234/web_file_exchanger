@@ -69,11 +69,11 @@ async fn list_folder(_ctx: Ctx, Json(_fs_cmd): Json<FsCmd>) -> Result<Json<Vec<F
 async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value>> {
     println!("->> {:12} - handler_upload", "HANDLER");
     while let Some(field) = multipart.next_field().await.unwrap() {
-        let file_name = field.name().unwrap().to_string();
+        let file_name = field.file_name().unwrap().to_string();
         let data = field.bytes().await.unwrap();
 
         println!(
-            "user:{} upload file:Length of `{}` is {} bytes",
+            ">>> user:{} upload file:Length of `{}` is {} bytes",
             ctx.get_user_name(),
             file_name,
             data.len()
@@ -84,7 +84,7 @@ async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value
         full_path.push(relative_path.strip_prefix("/").unwrap());
         //TODO path check
         //TODO: error handling
-        println!("{}", full_path.to_str().unwrap());
+        println!(">>> file saved at {}", full_path.to_str().unwrap());
         let file = File::create(full_path).unwrap();
         let mut buf_writer = BufWriter::new(file);
         let written_bytes = buf_writer.write(&data).unwrap();
