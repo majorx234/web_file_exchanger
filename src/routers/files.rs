@@ -12,9 +12,14 @@ use axum::{
     Json, Router,
 };
 use futures_util::stream::StreamExt;
-
 use serde_json::{json, Value};
-use std::{fs, path::PathBuf, str::FromStr};
+use std::io::BufWriter;
+use std::io::Write;
+use std::{
+    fs::{self, File},
+    path::PathBuf,
+    str::FromStr,
+};
 
 pub fn get_route() -> Router<ServerState> {
     Router::new()
@@ -73,6 +78,17 @@ async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value
             file_name,
             data.len()
         );
+        let relative_path = PathBuf::from_str(&file_name).unwrap();
+        let mut full_path = PathBuf::new();
+        full_path.push(Config::new().get_file_store_dir_path());
+        full_path.push(relative_path.strip_prefix("/").unwrap());
+        //TODO path check
+        //TODO: error handling
+        println!("{}", full_path.to_str().unwrap());
+        let file = File::create(full_path).unwrap();
+        let mut buf_writer = BufWriter::new(file);
+        let written_bytes = buf_writer.write(&data).unwrap();
+        buf_writer.flush().unwrap();
     }
     Ok(Json(json!({ "msg": "files upload niy" })))
 }
