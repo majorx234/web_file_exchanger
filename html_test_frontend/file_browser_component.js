@@ -56,6 +56,7 @@ class FileBrowserComponent extends HTMLElement {
     constructor() {
         super();
         this._token = null;
+        this.folder_path = "/";
         this.root = this.attachShadow({mode: "closed"});
         this.root.appendChild(template.content.cloneNode(true));
     }
@@ -72,8 +73,9 @@ class FileBrowserComponent extends HTMLElement {
         let fragmente = [];
         let upload_form_data = new FormData();
         for (var i = 0, f; f = upload_file_input.files[i]; i++) {
-            fragmente.push('file: ' + f.name + ' type: (' + f.type + ') - size: ' + f.size + ' bytes');
-            upload_form_data.append("file"+i, f);
+            fragmente.push('file: ' +  this.folder_path + f.name + ' type: (' + f.type + ') - size: ' + f.size + ' bytes');
+            let file_name_with_path = this.folder_path + f.name;
+            upload_form_data.append("file"+i, f, file_name_with_path);
         }
         this.logEvent(fragmente);
         let response_handler = (response_text) => {
@@ -134,6 +136,7 @@ class FileBrowserComponent extends HTMLElement {
                     let list_fs_handler_function = (json_data, base_tag) => {
                         let new_fs_list_tag = document.createElement("ul");
                         new_fs_list_tag = this.createHtmlFromFolderStructure(json_data, new_fs_list_tag, new_path);
+                        this.folder_path = new_path;
                         // base_tag.innerHTML = '';
                         let base_tag_children = base_tag.childNodes;
                         base_tag_children.forEach(function(item){
