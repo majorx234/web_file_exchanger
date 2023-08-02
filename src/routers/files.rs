@@ -3,7 +3,10 @@ use crate::{
     ctx::Ctx,
     models::folder_structure::FolderStructure,
     models::fs_cmd::Command,
-    models::{error::Result, fs_cmd::FsCmd},
+    models::{
+        error::{Error, Result},
+        fs_cmd::FsCmd,
+    },
     server_state::ServerState,
 };
 use axum::{
@@ -13,13 +16,13 @@ use axum::{
 };
 use futures_util::stream::StreamExt;
 use serde_json::{json, Value};
-use std::io::BufWriter;
 use std::io::Write;
 use std::{
     fs::{self, File},
     path::PathBuf,
     str::FromStr,
 };
+use std::{io::BufWriter, path::Component};
 
 pub fn get_route() -> Router<ServerState> {
     Router::new()
@@ -79,11 +82,21 @@ async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value
             data.len()
         );
         let relative_path = PathBuf::from_str(&file_name).unwrap();
+        if relative_path
+            .components()
+            .any(|x| x == Component::ParentDir)
+        {
+            return Err(Error::InvalidAccessDirectoryTraversal);
+        }
         let mut full_path = PathBuf::new();
+
         full_path.push(Config::new().get_file_store_dir_path());
         full_path.push(relative_path.strip_prefix("/").unwrap());
         //TODO path check
         //TODO: error handling
+        if !full_path.starts_with(Config::new().get_file_store_dir_path()) {
+            return Err(Error::InvalidAccessEscapeBaseDir);
+        }
         println!(">>> file saved at {}", full_path.to_str().unwrap());
         let file = File::create(full_path).unwrap();
         let mut buf_writer = BufWriter::new(file);

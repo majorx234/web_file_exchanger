@@ -11,6 +11,8 @@ pub enum Error {
     AuthFailTokenWrongFormat,
     AuthFailTokenInvalid,
     AuthErrorCtxNotInRequestExt,
+    InvalidAccessDirectoryTraversal,
+    InvalidAccessEscapeBaseDir,
 }
 
 impl Error {
@@ -23,6 +25,11 @@ impl Error {
             | Self::AuthFailTokenWrongFormat
             | Self::AuthErrorCtxNotInRequestExt => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
             // - Model niy
+
+            // File Access
+            Self::InvalidAccessEscapeBaseDir | Self::InvalidAccessDirectoryTraversal => {
+                (StatusCode::BAD_REQUEST, ClientError::INVALID_ACCESS)
+            }
 
             // - Fallback
             _ => (
@@ -60,4 +67,5 @@ pub enum ClientError {
     NO_AUTH,
     INVALID_PARAMS,
     SERVICE_ERROR,
+    INVALID_ACCESS,
 }
