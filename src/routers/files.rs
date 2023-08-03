@@ -10,7 +10,7 @@ use crate::{
     server_state::ServerState,
 };
 use axum::{
-    extract::multipart::Multipart,
+    extract::{multipart::Multipart, Path},
     routing::{get, post},
     Json, Router,
 };
@@ -27,11 +27,17 @@ use std::{io::BufWriter, path::Component};
 pub fn get_route() -> Router<ServerState> {
     Router::new()
         .route("/upload", post(handler_upload))
-        .route("/files", get(handler_files_list).post(list_folder))
+        .route("/files/*file_path", get(handler_get_file))
+        .route("/files", get(handler_list_files).post(list_folder))
 }
 
-pub async fn handler_files_list(_ctx: Ctx) -> Result<Json<Value>> {
-    println!("->> {:12} - handler_files_list", "HANDLER");
+pub async fn handler_get_file(_ctx: Ctx, Path(_path): Path<String>) -> Result<Json<Value>> {
+    println!("->> {:12} - handler_get_file", "HANDLER");
+    Ok(Json(json!({ "msg": "get file will come later" })))
+}
+
+pub async fn handler_list_files(_ctx: Ctx) -> Result<Json<Value>> {
+    println!("->> {:12} - handler_list_files", "HANDLER");
     let paths = fs::read_dir(Config::new().get_file_store_dir_path()).unwrap();
     for path in paths {
         println!("Name: {}", path.unwrap().path().display())
