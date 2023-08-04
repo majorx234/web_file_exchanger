@@ -1,4 +1,4 @@
-import {httpPost, httpGet} from "./http_operation.js";
+import {httpPost, httpGet, downloadFile} from "./http_operation.js";
 
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
@@ -159,6 +159,10 @@ class FileBrowserComponent extends HTMLElement {
                 // details_tag.append(new_fs_list_tag);
                 fs_item_tag.append(details_tag);
             } else {
+                fs_item_label.onclick = () => {
+                    let new_path = 'files' + path + fs_item_name;
+                    downloadFile(new_path, fs_item_name, this._token);
+                };
                 fs_item_tag.append(fs_item_label);
             }
             fs_list_tag.append(fs_item_tag);

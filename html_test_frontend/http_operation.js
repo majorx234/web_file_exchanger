@@ -33,3 +33,19 @@ export function httpPost(endpoint_name, data, variable_context, response_handler
     }
     xmlHttp.send(data);
 }
+
+export function downloadFile(path, fileName, token){
+    let url = "http://" + location.hostname + ":8080/" + path;
+    fetch(url, { headers: {Authorization: 'Bearer ' + token, method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' }})
+        .then(res => res.blob())
+        .then(res => {
+            const aElement = document.createElement('a');
+            aElement.setAttribute('download', fileName);
+            const href = URL.createObjectURL(res);
+            aElement.href = href;
+            // aElement.setAttribute('href', href);
+            aElement.setAttribute('target', '_blank');
+            aElement.click();
+            URL.revokeObjectURL(href);
+        });
+};
