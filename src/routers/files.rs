@@ -10,11 +10,13 @@ use crate::{
     server_state::ServerState,
 };
 use axum::{
+    body::StreamBody,
     extract::{multipart::Multipart, Path},
+    response::IntoResponse,
     routing::{get, post},
     Json, Router,
 };
-use futures_util::stream::StreamExt;
+use http::{header, HeaderMap};
 use serde_json::{json, Value};
 use std::io::Write;
 use std::{
@@ -23,6 +25,7 @@ use std::{
     str::FromStr,
 };
 use std::{io::BufWriter, path::Component};
+use tokio_util::io::ReaderStream;
 
 pub fn get_route() -> Router<ServerState> {
     Router::new()
@@ -31,9 +34,52 @@ pub fn get_route() -> Router<ServerState> {
         .route("/files", get(handler_list_files).post(list_folder))
 }
 
-pub async fn handler_get_file(_ctx: Ctx, Path(_path): Path<String>) -> Result<Json<Value>> {
-    println!("->> {:12} - handler_get_file", "HANDLER");
-    Ok(Json(json!({ "msg": "get file will come later" })))
+pub async fn handler_get_file(_ctx: Ctx, Path(file_path): Path<String>) -> impl IntoResponse {
+    println!("->> {:12} - handler_get_file: {}", "HANDLER", file_path);
+
+    let relative_path = PathBuf::from_str(&file_path).unwrap();
+    if relative_path
+        .components()
+        .any(|x| x == Component::ParentDir)
+    {
+        return Err(Error::InvalidAccessDirectoryTraversal);
+    }
+
+    let filename = match relative_path.file_name() {
+        Some(name) => name,
+        None => return Err(Error::InvalidFilePath),
+    };
+    // todo check if file exist
+    let mut full_local_file_path = PathBuf::new();
+    full_local_file_path.push(Config::new().get_file_store_dir_path());
+    full_local_file_path.push(&relative_path);
+    println!(
+        ">>> full_local_file_path: {}",
+        full_local_file_path.to_str().unwrap()
+    );
+    let file = match tokio::fs::File::open(&full_local_file_path).await {
+        Ok(file) => file,
+        Err(_err) => return Err(Error::FileNotFound),
+    };
+    let content_type = match mime_guess::from_path(&full_local_file_path).first_raw() {
+        Some(mime) => mime,
+        None => return Err(Error::InvalidMimeType),
+    };
+
+    let stream = ReaderStream::new(file);
+    let body = StreamBody::new(stream);
+
+    let mut headers = HeaderMap::new();
+    headers.insert(header::CONTENT_TYPE, content_type.parse().unwrap());
+    headers.insert(
+        header::CONTENT_DISPOSITION,
+        format!("attachment; filename=\"{:?}\"", filename)
+            .parse()
+            .unwrap(),
+    );
+
+    let value = body;
+    Ok(value)
 }
 
 pub async fn handler_list_files(_ctx: Ctx) -> Result<Json<Value>> {
@@ -107,6 +153,7 @@ async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value
         let file = File::create(full_path).unwrap();
         let mut buf_writer = BufWriter::new(file);
         let written_bytes = buf_writer.write(&data).unwrap();
+        println!(">>> wrote {} bytes", written_bytes);
         buf_writer.flush().unwrap();
     }
     Ok(Json(json!({ "msg": "files upload niy" })))

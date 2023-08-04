@@ -13,6 +13,10 @@ pub enum Error {
     AuthErrorCtxNotInRequestExt,
     InvalidAccessDirectoryTraversal,
     InvalidAccessEscapeBaseDir,
+    InvalidFilePath,
+    InvalidFile,
+    InvalidMimeType,
+    FileNotFound,
 }
 
 impl Error {
@@ -27,7 +31,12 @@ impl Error {
             // - Model niy
 
             // File Access
-            Self::InvalidAccessEscapeBaseDir | Self::InvalidAccessDirectoryTraversal => {
+            Self::InvalidAccessEscapeBaseDir
+            | Self::InvalidFilePath
+            | Self::InvalidFile
+            | Self::FileNotFound
+            | Self::InvalidMimeType
+            | Self::InvalidAccessDirectoryTraversal => {
                 (StatusCode::BAD_REQUEST, ClientError::INVALID_ACCESS)
             }
 
