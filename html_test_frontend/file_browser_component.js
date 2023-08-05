@@ -116,6 +116,24 @@ class FileBrowserComponent extends HTMLElement {
         this.httpPostCmdPrompt("ls","/",list_fs_handler_function, base_tag);
     }
 
+    createFolderDetails(json_data, base_tag, new_path) {
+        let new_fs_list_tag = document.createElement("ul");
+        new_fs_list_tag = this.createHtmlFromFolderStructure(json_data, new_fs_list_tag, new_path);
+        this.folder_path = new_path;
+        // base_tag.innerHTML = '';
+        let base_tag_children = base_tag.childNodes;
+        base_tag_children.forEach(function(item){
+            if(item.tagName != "SUMMARY"){
+                base_tag.removeChild(item);
+            }
+        });
+        let folder_browser_tag = this.root.querySelector("#folder_details");
+        folder_browser_tag.innerHTML = "";
+        let new_fs_list_tag2 = new_fs_list_tag.cloneNode(true);
+        folder_browser_tag.append(new_fs_list_tag2);
+        base_tag.append(new_fs_list_tag);
+    }
+
     createHtmlFromFolderStructure(list_fs_json, fs_list_tag, path) {
         fs_list_tag.classList.add("folder");
         for (const fs_item in list_fs_json){
@@ -134,21 +152,7 @@ class FileBrowserComponent extends HTMLElement {
                 let details_tag_onlick_fct = (event) => {
                     let new_path = path + fs_item_name + "/";
                     let list_fs_handler_function = (json_data, base_tag) => {
-                        let new_fs_list_tag = document.createElement("ul");
-                        new_fs_list_tag = this.createHtmlFromFolderStructure(json_data, new_fs_list_tag, new_path);
-                        this.folder_path = new_path;
-                        // base_tag.innerHTML = '';
-                        let base_tag_children = base_tag.childNodes;
-                        base_tag_children.forEach(function(item){
-                            if(item.tagName != "SUMMARY"){
-                                base_tag.removeChild(item);
-                            }
-                        });
-                        let folder_browser_tag = this.root.querySelector("#folder_details");
-                        folder_browser_tag.innerHTML = "";
-                        let new_fs_list_tag2 = new_fs_list_tag.cloneNode(true);
-                        folder_browser_tag.append(new_fs_list_tag2);
-                        base_tag.append(new_fs_list_tag);
+                        this.createFolderDetails(json_data, base_tag, new_path);
                     };
                     this.httpPostCmdPrompt("ls",new_path,list_fs_handler_function, details_tag);
                 };
