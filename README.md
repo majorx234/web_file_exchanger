@@ -1,29 +1,49 @@
 # Info
-- Webserver to help exchanging files
+- Webserver to uploade/download files
 - WIP
 
+# Build
+- `cargo build`
+- web frontend is written in vanilla-js, no build is needed
+
 # Usage
-- not usable yet
+- in alpha stadium
 - `source server_conf.sh`
 - `cargo run`
 
 # Config
-- through ENVVARS:
+- through ENV_VARS:
   - `HOST_IP` - ip
   - `PORT` - port
-  - `DATABSE_URL` - not used
+  - `DATABSE_URL` - not used yet
   - `FRONTEND_DIR` - directory of web application
   - `FILE_STORE_DIR` - directories of file store
   - `JWT_SECRET` - password to sign tokens
   - `JWT_EXPIRE_TIME` - expiretime of token
 
+# Development
+- rebuild backend when updating source file:
+  - `cargo watch -q -c -w src/ -x run`
+- run automated testing:
+  - `cargo watch -q -c -w tests/ -x "test -q getpost_helper -- --nocapture"`
+
 # ToDo
-- login System for users
-- add Endpoints for:
-  - list dir
-  - dir navigation
-  - file download
-  - file upload
+- login System for users via SQL database
+  - OAuth2 support
+- put frontend login in own Web Component
+- Add drag & drop support and MIME features
+- add search in folder
+
+# License
+- this software is distributed under GPLv3 ( see LICENSE)
+- use this software on your own risk, no warranties is given
+
+# History
+- 2023-08-06 - v0.2.0 Alpha Version with support of up-/downloading
 
 # References
 - uses forge sha256 implementation: https://github.com/brillout/forge-sha256/
+- thx to Jeremey Chone for his Axum course:
+  - https://www.youtube.com/watch?v=XZtlD_m59sM
+  - https://github.com/jeremychone-channel/rust-axum-course
+- project make use of ![Alt text](http://vanilla-js.com/assets/button.png "vanilla-js")

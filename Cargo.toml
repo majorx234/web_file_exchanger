@@ -1,6 +1,6 @@
 [package]
 name = "web_file_exchanger"
-version = "1.0.0"
+version = "0.2.0"
 authors = ["MajorX234 <majorx234@googlemail.com>"]
 edition = "2021"
 
