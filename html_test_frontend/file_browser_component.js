@@ -107,8 +107,7 @@ class FileBrowserComponent extends HTMLElement {
         // main part:
         // handle json: [{"filename":"README.md","is_folder":false,"children":null},...]
         let list_fs_handler_function = (list_fs_json, base_tag) => {
-            let fs_list_tag = document.createElement("ul");
-            fs_list_tag = this.createHtmlFromFolderStructure(list_fs_json, fs_list_tag, "/", this.root, this._token);
+            let fs_list_tag = this.createHtmlFromFolderStructure(list_fs_json, "/");
             base_tag.append(fs_list_tag);
         };
 
@@ -117,8 +116,8 @@ class FileBrowserComponent extends HTMLElement {
     }
 
     createFolderDetails(json_data, base_tag, new_path) {
-        let new_fs_list_tag = document.createElement("ul");
-        new_fs_list_tag = this.createHtmlFromFolderStructure(json_data, new_fs_list_tag, new_path);
+        let new_fs_list_tag = this.createHtmlFromFolderStructure(json_data, new_path);
+        let new_fs_list_tag2 = new_fs_list_tag.cloneNode(true);
         this.folder_path = new_path;
         // base_tag.innerHTML = '';
         let base_tag_children = base_tag.childNodes;
@@ -129,12 +128,12 @@ class FileBrowserComponent extends HTMLElement {
         });
         let folder_browser_tag = this.root.querySelector("#folder_details");
         folder_browser_tag.innerHTML = "";
-        let new_fs_list_tag2 = new_fs_list_tag.cloneNode(true);
         folder_browser_tag.append(new_fs_list_tag2);
         base_tag.append(new_fs_list_tag);
     }
 
-    createHtmlFromFolderStructure(list_fs_json, fs_list_tag, path) {
+    createHtmlFromFolderStructure(list_fs_json, path) {
+        let fs_list_tag = document.createElement("ul");
         fs_list_tag.classList.add("folder");
         for (const fs_item in list_fs_json){
             let fs_item_name = list_fs_json[fs_item]["filename"];
