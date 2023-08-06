@@ -32,7 +32,6 @@ template.innerHTML = /*html*/ `
 }
 </style>
 <nav class="nav">
-  <button type="button" id="get_ls_directories_button">get_ls_directory</button>
   <br></br>
   <div>
     <input name="myfile" id="upload_file_input" type="file" multiple></input>
