@@ -45,8 +45,7 @@ template.innerHTML = /*html*/ `
   <div id="folder_details"></div>
   </div>
 </main>
-<aside class="aside">
-  <div id="folder_tree"></div>
+<aside class="aside" id="folder_tree">
 </aside>
 `;
 
@@ -105,20 +104,32 @@ class FileBrowserComponent extends HTMLElement {
     init_folder_structure() {
         // main part:
         // handle json: [{"filename":"README.md","is_folder":false,"children":null},...]
-        let list_fs_handler_function = (list_fs_json, base_tag) => {
-            let [fs_tree_list_tag, fs_details_list_tag] = this.createHtmlFromFolderStructure(list_fs_json, "/");
-            base_tag.append(fs_tree_list_tag);
+        let root_ul_tag = document.createElement("ul");
+        root_ul_tag.classList.add("folder");
+        let root_item_tag = document.createElement("li");
+        let root_item_label = document.createElement("label");
+        root_item_label.innerHTML = "/";
+        let root_details_tag  = document.createElement("details");
+        root_item_label.onclick = (event) => {
+            let new_path = "/";
+            let list_fs_handler_function = (json_data, base_tag) => {
+                this.createFolderDetails(json_data, base_tag, new_path);
+            };
+            this.httpPostCmdPrompt("ls",new_path,list_fs_handler_function, root_details_tag);
         };
-
+        let root_item_summary = document.createElement("summary");
+        root_item_summary.append(root_item_label);
+        root_details_tag.append(root_item_summary);
+        root_item_tag.append(root_details_tag);
         let base_tag = this.root.querySelector("#folder_tree");
-        this.httpPostCmdPrompt("ls","/",list_fs_handler_function, base_tag);
+        root_ul_tag.append(root_item_tag);
+        base_tag.append(root_ul_tag);
     }
 
     createFolderDetails(json_data, base_tag, new_path) {
         let [new_fs_tree_list_tag, new_fs_details_list_tag] = this.createHtmlFromFolderStructure(json_data, new_path);
-        let new_fs_list_tag2 = new_fs_details_list_tag; // new_fs_tree_list_tag.cloneNode(true);
+        let new_fs_list_tag2 = new_fs_details_list_tag;
         this.folder_path = new_path;
-        // base_tag.innerHTML = '';
         let base_tag_children = base_tag.childNodes;
         base_tag_children.forEach(function(item){
             if(item.tagName != "SUMMARY"){
@@ -143,7 +154,6 @@ class FileBrowserComponent extends HTMLElement {
             fs_item_label.innerHTML = fs_item_name;
 
             if (list_fs_json[fs_item]["is_folder"]){
-                let new_fs_tree_list_tag = document.createElement("ul");
                 let fs_item_label_onlick_fct = (event) => {};
                 // fs_item_label.onclick = fs_item_label_onlick_fct;
 
@@ -162,11 +172,11 @@ class FileBrowserComponent extends HTMLElement {
                 fs_item_label2.onclick = details_tag_onlick_fct;
                 fs_item_summary.append(fs_item_label);
                 details_tag.append(fs_item_summary);
-                // details_tag.append(new_fs_tree_list_tag);
                 fs_item_tag.append(details_tag);
                 fs_tree_list_tag.append(fs_item_tag);
                 let fs_details_item = document.createElement("li");
                 fs_details_item.append(fs_item_label2);
+                fs_details_item.classList.add("folder_item");
                 fs_details_list_tag.append(fs_details_item);
             } else {
                 fs_item_label.onclick = () => {
@@ -174,6 +184,7 @@ class FileBrowserComponent extends HTMLElement {
                     downloadFile(new_path, fs_item_name, this._token);
                 };
                 fs_item_tag.append(fs_item_label);
+                fs_item_tag.classList.add("file_item");
                 fs_details_list_tag.append(fs_item_tag);
             }
         }
