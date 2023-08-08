@@ -17,6 +17,7 @@ use axum::{
     Json, Router,
 };
 use http::{header, HeaderMap};
+// use path_absolutize::*;
 use serde_json::{json, Value};
 use std::io::Write;
 use std::{
@@ -49,7 +50,7 @@ pub async fn handler_get_file(_ctx: Ctx, Path(file_path): Path<String>) -> impl 
         Some(name) => name,
         None => return Err(Error::InvalidFilePath),
     };
-    // todo check if file exist
+
     let mut full_local_file_path = PathBuf::new();
     full_local_file_path.push(Config::new().get_file_store_dir_path());
     full_local_file_path.push(&relative_path);
@@ -61,6 +62,19 @@ pub async fn handler_get_file(_ctx: Ctx, Path(file_path): Path<String>) -> impl 
         Ok(file) => file,
         Err(_err) => return Err(Error::FileNotFound),
     };
+
+    // check against symlinks attacks
+    let file_path_canonicalized = fs::canonicalize(&full_local_file_path);
+    let file_store_canonicalized = fs::canonicalize(Config::new().get_file_store_dir_path());
+    match file_path_canonicalized {
+        Ok(file_path_canonicalized) => {
+            if !file_path_canonicalized.starts_with(file_store_canonicalized.unwrap()) {
+                return Err(Error::InvalidAccessEscapeBaseDir);
+            }
+        }
+        Err(_) => return Err(Error::FileNotFound),
+    }
+
     let content_type = match mime_guess::from_path(&full_local_file_path).first_raw() {
         Some(mime) => mime,
         None => return Err(Error::InvalidMimeType),
