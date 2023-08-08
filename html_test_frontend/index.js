@@ -1,5 +1,6 @@
 import {httpPost, httpGet} from "./http_operation.js";
 import "./file_browser_component.js";
+import "./login_component.js";
 
 var token = null
 
@@ -29,36 +30,30 @@ function httpGetInfo() {
     httpGet("info", variable_context, response_handler, token);
 }
 
-function httpPostLogin() {
-    let end_point_name = "login";
-    let variable_context = "login: ";
-    let user_name = document.getElementById("user_name_input").value;
-    let password = document.getElementById("password_input").value;
-    let password_hash = forge_sha256(password + "salt29562");
-    let json_data = {
-        user_name: user_name,
-        password_hash: password_hash
-    };
-    let response_handler = (response_text) => {
-        let json_data = JSON.parse(response_text);
-        token = json_data["token"];
-        outputToConsole(variable_context + response_text);
+function clearConsole() {
+    document.getElementById("console").innerHTML = "";
+}
+
+function create_login() {
+    let header_tag = document.getElementById("header");
+    let login_component_tag = document.createElement("login-component");
+    login_component_tag.addEventListener("log-event",(event) => {
+            outputToConsole(event.detail);
+        });
+    login_component_tag.addEventListener("token-event", (token_event) => {
         // init_folder_structure();
         let content_tag = document.getElementById("content");
         let file_browser_tag = document.createElement("file-browser-component");
-        file_browser_tag.token = token;
+        file_browser_tag.token = token_event.detail;
+        token = token_event.detail;
         content_tag.innerHTML = "";
         content_tag.append(file_browser_tag);
         file_browser_tag.addEventListener("log-event",(event) => {
             outputToConsole(event.detail);
-        })
-    };
-    let json_string = JSON.stringify(json_data);
-    httpPost(end_point_name, json_string, variable_context, response_handler, null, 'json');
-}
+        });
 
-function clearConsole() {
-    document.getElementById("console").innerHTML = "";
+    });
+    header_tag.append(login_component_tag);
 }
 
 document.getElementById("clear_button").onclick = function() {
@@ -73,8 +68,5 @@ document.getElementById("get_info_button").onclick = function() {
     httpGetInfo();
 };
 
-document.getElementById("login_button").onclick = function() {
-    httpPostLogin();
-};
-
+create_login();
 outputToConsole("init successful");
