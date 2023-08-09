@@ -1,5 +1,5 @@
 import {httpPost, httpGet} from "./http_operation.js";
-// import {forge_sha256} from "./forge-sha256.min.js"
+import "./forge-sha256.min.js"
 
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
