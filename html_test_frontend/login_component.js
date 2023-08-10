@@ -1,14 +1,20 @@
 import {httpPost, httpGet} from "./http_operation.js";
 import "./forge-sha256.min.js"
+import * as bootstrap from "./bootstrap-5.3.1-dist/bootstrap.min.js"
 
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
 <style>
 </style>
-<div class="login">
-  <input type="text" id="user_name_input">
-  <input type="text" id="password_input">
-  <button type="button" id="login_button">login</button>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="./bootstrap-5.3.1-dist/bootstrap.min.css" rel="stylesheet">
+
+<div class="d-flex flex-row align-items-center" data-bs-theme="light">
+    <label class="form-label" for="user">User Name:</label>
+    <input type="text" id="user_name_input" class="form-control form-control-sm" placeholder="User">
+    <label class="form-label" for="password">Password:</label>
+    <input type="password" class="form-control form-control-sm" id="password_input" placeholder="Enter password">
+    <button type="button" class="btn btn-primary" id="login_button">login</button>
 </div>
 `;
 
