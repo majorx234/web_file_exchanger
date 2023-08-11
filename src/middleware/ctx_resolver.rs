@@ -8,6 +8,7 @@ use crate::{
 };
 
 pub async fn ctx_resolver<B>(mut req: Request<B>, next: Next<B>) -> Result<Response> {
+    println!("->> {:<12} - ctx_resolver", "MIDDELWARE");
     let token = req
         .headers()
         .get(header::AUTHORIZATION)

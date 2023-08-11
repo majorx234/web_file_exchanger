@@ -12,7 +12,10 @@ use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database::{test_db::TestDb, DataBaseInterface},
-    middleware::{ctx_resolver::ctx_resolver, jwt_auth::auth, resource_mapper::response_mapper},
+    middleware::{
+        ctx_resolver::ctx_resolver, ip_limitter::ip_limitter, jwt_auth::auth,
+        resource_mapper::response_mapper,
+    },
     routers::{files, info, login, static_web_page},
     server_state::{ServerElements, ServerState},
 };
@@ -48,7 +51,8 @@ async fn main() {
         .merge(info::get_route())
         .merge(files::get_route())
         .route_layer(middleware::from_fn(auth))
-        .route_layer(middleware::from_fn(ctx_resolver));
+        .route_layer(middleware::from_fn(ctx_resolver))
+        .route_layer(middleware::from_fn(ip_limitter));
 
     let routes_all = Router::new()
         .route("/hello", get(handler_hello))
