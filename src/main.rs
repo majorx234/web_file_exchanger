@@ -7,6 +7,7 @@ use axum::{
     routing::get,
     Router,
 };
+use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
     backend::Backend,
@@ -68,7 +69,7 @@ async fn main() {
         .with_state(server_state);
 
     axum::Server::bind(&addr)
-        .serve(routes_all.into_make_service())
+        .serve(routes_all.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .expect("failed to start server");
 }
