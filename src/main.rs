@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::State,
+    extract::{ConnectInfo, State},
     middleware,
     response::{Html, IntoResponse},
     routing::get,
     Router,
 };
+use axum_client_ip::SecureClientIpSource;
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use web_file_exchanger::{
@@ -53,7 +54,8 @@ async fn main() {
         .merge(files::get_route())
         .route_layer(middleware::from_fn(auth))
         .route_layer(middleware::from_fn(ctx_resolver))
-        .route_layer(middleware::from_fn(ip_limitter));
+        .route_layer(middleware::from_fn(ip_limitter))
+        .route_layer(SecureClientIpSource::ConnectInfo.into_extension());
 
     let routes_all = Router::new()
         .route("/hello", get(handler_hello))

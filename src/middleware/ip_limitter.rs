@@ -25,12 +25,12 @@ impl IpLimitter {
 
 pub async fn ip_limitter<B>(
     InsecureClientIp(insecure_ip): InsecureClientIp,
-    // SecureClientIp(secure_ip): SecureClientIp,
+    SecureClientIp(secure_ip): SecureClientIp,
     req: Request<B>,
     next: Next<B>,
 ) -> Result<Response> {
     println!("->> {:<12} - ip_limitter", "MIDDELWARE");
     println!("  >>> {insecure_ip:?}");
-    // println!("  >>> {secure_ip:?}");
+    println!("  >>> {secure_ip:?}");
     Ok(next.run(req).await)
 }
