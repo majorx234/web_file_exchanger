@@ -10,8 +10,8 @@ use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 #[derive(Clone, Debug)]
 pub struct IpLimitter {
     ip_prefix: String,
-    ip_whitelist: Option<Vec<String>>,
-    ip_blacklist: Option<Vec<String>>,
+    ip_whitelist: Option<Vec<(String, i32)>>,
+    ip_blacklist: Option<Vec<(String, i32)>>,
 }
 
 impl IpLimitter {
@@ -23,18 +23,40 @@ impl IpLimitter {
         }
     }
 
-    pub fn create_iplimit_from_str(ip_whitelist_str: &str) -> Self {
+    pub fn create_iplimit_from_str(ip_whitelist_str: &str, ip_blacklist_str: &str) -> Result<Self> {
         let mut ip_whitelist = Vec::new();
-        for ip in ip_whitelist_str.split(',') {
-            if ip.parse::<IpAddr>().unwrap().is_ipv4() {
-                ip_whitelist.push(ip.to_string());
-            }
-        }
-        Self {
+        let mut ip_blacklist = Vec::new();
+        let ip_list_fct =
+            |ip_list: &mut Vec<(String, i32)>, ip_list_str: &str, err: Error| -> Result<()> {
+                for ip_range in ip_list_str.split(',') {
+                    let mut ip_parts = ip_range.split('/');
+                    let (count, _) = ip_parts.size_hint();
+                    if count != 2 {
+                        return Err(err);
+                    }
+                    let ip = ip_parts.next().unwrap();
+                    let range = ip_parts.next().unwrap();
+                    if let (Ok(_), Ok(range)) = (ip.parse::<Ipv4Addr>(), range.parse::<i32>()) {
+                        ip_list.push((ip.to_string(), range));
+                    }
+                }
+                Ok(())
+            };
+        ip_list_fct(
+            &mut ip_whitelist,
+            ip_whitelist_str,
+            Error::ParseFailInvalidWhiteList,
+        )?;
+        ip_list_fct(
+            &mut ip_blacklist,
+            ip_whitelist_str,
+            Error::ParseFailInvalidBlackList,
+        )?;
+        Ok(Self {
             ip_prefix: String::new(),
             ip_whitelist: Some(ip_whitelist),
-            ip_blacklist: None,
-        }
+            ip_blacklist: Some(ip_blacklist),
+        })
     }
 }
 

@@ -17,6 +17,8 @@ pub enum Error {
     InvalidFile,
     InvalidMimeType,
     FileNotFound,
+    ParseFailInvalidWhiteList,
+    ParseFailInvalidBlackList,
 }
 
 impl Error {
