@@ -33,10 +33,15 @@ pub fn parse_token(jwt_token: String) -> Result<(String, usize)> {
         &Validation::new(token_header.alg),
     ) {
         Ok(claims) => claims.claims,
-        Err(err) => {
-            println! {"Error_message: {err}"};
-            return Err(Error::AuthFailTokenInvalid);
-        }
+        Err(err) => match err {
+            ExpiredSignature => {
+                return Err(Error::AuthFailTokenExpired);
+            }
+            _ => {
+                println! {"Error_message: {err}"};
+                return Err(Error::AuthFailTokenInvalid);
+            }
+        },
     };
     // TODO Check if user exist in database
     /*

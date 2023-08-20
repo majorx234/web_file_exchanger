@@ -10,6 +10,7 @@ pub enum Error {
     AuthFailNoAuthToken,
     AuthFailTokenWrongFormat,
     AuthFailTokenInvalid,
+    AuthFailTokenExpired,
     AuthErrorCtxNotInRequestExt,
     InvalidAccessDirectoryTraversal,
     InvalidAccessEscapeBaseDir,
@@ -28,6 +29,7 @@ impl Error {
         match self {
             // - Auth
             Self::AuthFailNoAuthToken
+            | Self::AuthFailTokenExpired
             | Self::AuthFailTokenWrongFormat
             | Self::AuthErrorCtxNotInRequestExt => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
             // - Model niy
