@@ -25,7 +25,7 @@
 - rebuild backend when updating source file:
   - `cargo watch -q -c -w src/ -x run`
 - run automated testing:
-  - `cargo watch -q -c -w tests/ -x "test -q getpost_helper -- --nocapture"`
+  - `cargo watch -q -c -w tests/ -x "test -- --nocapture"`
 
 # ToDo
 - login System for users via SQL database
