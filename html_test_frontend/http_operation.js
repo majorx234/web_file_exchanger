@@ -34,6 +34,23 @@ export function httpPost(endpoint_name, data, variable_context, response_handler
     xmlHttp.send(data);
 }
 
+export function httpPostfetch(endpoint_name, data, variable_context, response_handler, token, data_type="json"){
+    let endpoint = "http://" + location.hostname + ":8080/" + endpoint_name;
+    fetch(endpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+           Accept: "application/json",
+           "Content-Type": "application/json",
+           Authorization: 'Bearer ' + token,
+           "User-Agent": "any-name"
+        }
+    })
+    .then(response => {
+        return response_handler(response.text());
+    });
+}
+
 export function downloadFile(path, fileName, token){
     let url = "http://" + location.hostname + ":8080/" + path;
     fetch(url, { headers: {Authorization: 'Bearer ' + token, method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' }})
