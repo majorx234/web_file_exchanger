@@ -51,7 +51,13 @@ export function httpPostFetch(endpoint_name, data, variable_context, response_ha
         }
     })
         .then(response => {
-            return response_handler(response.text());
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response.text();
+        })
+        .then(text => {
+            response_handler(text);
         })
         .catch(error => {
             // TODO add error handling function here
