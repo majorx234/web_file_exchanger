@@ -1,4 +1,4 @@
-import {httpPost, httpGet} from "./http_operation.js";
+import {httpGet} from "./http_operation.js";
 import "./file_browser_component.js";
 import "./login_component.js";
 

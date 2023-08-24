@@ -1,4 +1,4 @@
-import {httpPost, httpGet, httpPostFetch} from "./http_operation.js";
+import {httpPostFetch} from "./http_operation.js";
 import "./forge-sha256.min.js"
 import * as bootstrap from "./bootstrap-5.3.1-dist/bootstrap.min.js"
 

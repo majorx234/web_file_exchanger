@@ -1,4 +1,4 @@
-import {httpPost, httpGet, downloadFile} from "./http_operation.js";
+import {downloadFile, httpPostFetch} from "./http_operation.js";
 
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
@@ -80,7 +80,7 @@ class FileBrowserComponent extends HTMLElement {
             let json_data = JSON.parse(response_text);
             this.logEvent(variable_context + response_text);
         };
-        httpPost(end_point_name, upload_form_data, variable_context, response_handler, this._token, 'form_data');
+        httpPostFetch(end_point_name, upload_form_data, variable_context, response_handler, this._token, 'form_data');
     }
 
     httpPostCmdPrompt(cmd,path, handler_fct = null, base_tag = null){
@@ -98,7 +98,7 @@ class FileBrowserComponent extends HTMLElement {
                 this.logEvent(variable_context + response_text);
             }
         };
-        httpPost("files", json_string, variable_context, response_handler, this._token);
+        httpPostFetch("files", json_string, variable_context, response_handler, this._token);
     }
 
     init_folder_structure() {
