@@ -42,7 +42,7 @@ export function httpPostFetch(endpoint_name, data, variable_context, response_ha
     }
     fetch(endpoint, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: data,
         headers: {
            Accept: "application/json",
            "Content-Type": content_type,
