@@ -1,4 +1,4 @@
-import {httpPost, httpGet} from "./http_operation.js";
+import {httpPost, httpGet, httpPostFetch} from "./http_operation.js";
 import "./forge-sha256.min.js"
 import * as bootstrap from "./bootstrap-5.3.1-dist/bootstrap.min.js"
 
@@ -55,7 +55,7 @@ class LoginComponent extends HTMLElement {
             this.logEvent(variable_context + response_text);
         };
         let json_string = JSON.stringify(json_data);
-        httpPost(end_point_name, json_string, variable_context, response_handler, null, 'json');
+        httpPostFetch(end_point_name, json_string, variable_context, response_handler, null, 'json');
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
