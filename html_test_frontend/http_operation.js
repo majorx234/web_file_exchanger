@@ -34,21 +34,30 @@ export function httpPost(endpoint_name, data, variable_context, response_handler
     xmlHttp.send(data);
 }
 
-export function httpPostfetch(endpoint_name, data, variable_context, response_handler, token, data_type="json"){
+export function httpPostFetch(endpoint_name, data, variable_context, response_handler, token, data_type="json"){
     let endpoint = "http://" + location.hostname + ":8080/" + endpoint_name;
+    let content_type = "text/html";
+    if (data_type == "json") {
+        content_type = 'application/json'
+    }
     fetch(endpoint, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
            Accept: "application/json",
-           "Content-Type": "application/json",
+           "Content-Type": content_type,
            Authorization: 'Bearer ' + token,
            "User-Agent": "any-name"
         }
     })
-    .then(response => {
-        return response_handler(response.text());
-    });
+        .then(response => {
+            return response_handler(response.text());
+        })
+        .catch(error => {
+            // TODO add error handling function here
+            console.log("Fetch error " + variable_context);
+            console.log(error);
+        });
 }
 
 export function downloadFile(path, fileName, token){
