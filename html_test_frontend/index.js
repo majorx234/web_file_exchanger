@@ -1,15 +1,13 @@
 import {httpGet} from "./http_operation.js";
 import "./file_browser_component.js";
 import "./login_component.js";
+import "./console_component.js";
 
 var token = null
 
 function outputToConsole(text) {
-    let para = document.createElement("p");
-    let node = document.createTextNode(text);
-    para.appendChild(node);
-    document.getElementById("console").prepend(para);
-    para.scrollIntoView();
+    let json_data = { msg : text };
+    document.getElementById("console").print = JSON.stringify(json_data);
 }
 
 function httpGetTest() {
@@ -28,10 +26,6 @@ function httpGetInfo() {
         outputToConsole(variable_context + response_text);
     };
     httpGet("info", variable_context, response_handler, token);
-}
-
-function clearConsole() {
-    document.getElementById("console").innerHTML = "";
 }
 
 function create_login() {
@@ -56,9 +50,12 @@ function create_login() {
     header_tag.append(login_component_tag);
 }
 
-document.getElementById("clear_button").onclick = function() {
-    clearConsole();
-};
+function create_console() {
+    let footer_tag = document.getElementById("footer");
+    let consol_component_tag = document.createElement("console-component");
+    consol_component_tag.setAttribute("id","console");
+    footer_tag.append(consol_component_tag);
+}
 
 document.getElementById("get_test_button").onclick = function() {
     httpGetTest();
@@ -68,5 +65,7 @@ document.getElementById("get_info_button").onclick = function() {
     httpGetInfo();
 };
 
+
 create_login();
+create_console();
 outputToConsole("init successful");
