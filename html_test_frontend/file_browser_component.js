@@ -6,7 +6,7 @@ template.innerHTML = /*html*/ `
 <style>
 :host {
   display: grid;
-  grid-template-rows: 150px auto auto 100px;
+  grid-template-rows: 100px auto auto auto auto auto 100px;
   grid-template-columns: repeat(10, 10%);
 }
 
@@ -17,28 +17,28 @@ template.innerHTML = /*html*/ `
 
 :host > .content {
   grid-column:4/11;
-  grid-row:2 / 5;
+  grid-row:2 / 7;
   text-align: left;
 }
 
 :host > .aside {
   grid-column:1 / 4;
-  grid-row:2 /5;
+  grid-row:2 /7;
   text-align: left;
 }
 
 :host > .footer {
   grid-column: 1 / 11;
-  grid-row:5 / 6;
+  grid-row:7 / 8;
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="./bootstrap-5.3.1-dist/bootstrap.min.css" rel="stylesheet">
 <nav class="nav">
   <br></br>
-  <div>
+  <div class="d-flex flex-row align-items-center" data-bs-theme="light">
     <label for="upload_file_input" class="form-label">Multiple files input example</label>
-    <input class="form-control" type="file" id="upload_file_input" multiple />
+    <input class="form-control form-control-sm" type="file" id="upload_file_input" multiple />
     <button type="button" class="btn btn-primary" id="upload_button">upload_file</button>
   </div>
 </nav>
@@ -50,7 +50,7 @@ template.innerHTML = /*html*/ `
 </aside>
 <footer>
   <form action="" class="js-form" id="js-form" >
-    <input type="text" class="cmd_prompt" id="cmd_prompts"></input>
+    <input type="text" class="cmd_prompt form-control-sm" id="cmd_prompts"></input>
   </form>
 </footer>
 `;

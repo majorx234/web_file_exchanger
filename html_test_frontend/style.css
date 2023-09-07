@@ -10,20 +10,9 @@
   text-align: left;
 }
 
-.grid > .nav {
-  grid-column:1 / 11;
-  grid-row:2 / 3;
-}
-
 .grid > .content {
-  grid-column:4/11;
-  grid-row:3 / 5;
-  text-align: left;
-}
-
-.grid > .aside {
-  grid-column:1 / 4;
-  grid-row:3 /5;
+  grid-column:1/11;
+  grid-row:2 / 5;
   text-align: left;
 }
 

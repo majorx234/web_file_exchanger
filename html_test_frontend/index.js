@@ -57,15 +57,6 @@ function create_console() {
     footer_tag.append(consol_component_tag);
 }
 
-document.getElementById("get_test_button").onclick = function() {
-    httpGetTest();
-};
-
-document.getElementById("get_info_button").onclick = function() {
-    httpGetInfo();
-};
-
-
 create_login();
 create_console();
 outputToConsole("init successful");
