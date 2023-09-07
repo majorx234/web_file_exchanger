@@ -46,4 +46,6 @@
 - thx to Jeremey Chone for his Axum course:
   - https://www.youtube.com/watch?v=XZtlD_m59sM
   - https://github.com/jeremychone-channel/rust-axum-course
+- thx to Kate Morley for her CSS Tutorial of tree views on lists
+  - https://iamkate.com/code/tree-views/
 - project make use of ![Alt text](http://vanilla-js.com/assets/button.png "vanilla-js")
