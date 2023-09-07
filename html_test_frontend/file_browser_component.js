@@ -1,4 +1,5 @@
 import {downloadFile, httpPostFetch} from "./http_operation.js";
+import * as bootstrap from "./bootstrap-5.3.1-dist/bootstrap.min.js"
 
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
@@ -31,15 +32,15 @@ template.innerHTML = /*html*/ `
   grid-row:5 / 6;
 }
 </style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="./bootstrap-5.3.1-dist/bootstrap.min.css" rel="stylesheet">
 <nav class="nav">
   <br></br>
   <div>
-    <input name="myfile" id="upload_file_input" type="file" multiple></input>
-    <button type="button" id="upload_button">upload_file</button>
+    <label for="upload_file_input" class="form-label">Multiple files input example</label>
+    <input class="form-control" type="file" id="upload_file_input" multiple />
+    <button type="button" class="btn btn-primary" id="upload_button">upload_file</button>
   </div>
-  <form action="" class="js-form" id="js-form" >
-    <input type="text" class="cmd_prompt" id="cmd_prompts"></input>
-  </form>
 </nav>
 <main class="content">
   <div id="folder_details"></div>
@@ -47,6 +48,11 @@ template.innerHTML = /*html*/ `
 </main>
 <aside class="aside" id="folder_tree">
 </aside>
+<footer>
+  <form action="" class="js-form" id="js-form" >
+    <input type="text" class="cmd_prompt" id="cmd_prompts"></input>
+  </form>
+</footer>
 `;
 
 class FileBrowserComponent extends HTMLElement {
