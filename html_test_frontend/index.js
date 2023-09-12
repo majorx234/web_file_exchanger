@@ -10,24 +10,6 @@ function outputToConsole(text) {
     document.getElementById("console").print = JSON.stringify(json_data);
 }
 
-function httpGetTest() {
-    let variable_context = "get test: ";
-    let response_handler = (response_text) => {
-        // let json_data = JSON.parse(response_text);
-        outputToConsole(variable_context + response_text);
-    };
-    httpGet("hello", variable_context, response_handler, token);
-}
-
-function httpGetInfo() {
-    let variable_context = "get info: ";
-    let response_handler = (response_text) => {
-        // let json_data = JSON.parse(response_text);
-        outputToConsole(variable_context + response_text);
-    };
-    httpGet("info", variable_context, response_handler, token);
-}
-
 function create_login() {
     let header_tag = document.getElementById("header");
     let login_component_tag = document.createElement("login-component");
