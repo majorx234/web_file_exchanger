@@ -129,11 +129,6 @@ template.innerHTML = /*html*/ `
 </main>
 <aside class="aside tree" id="folder_tree">
 </aside>
-<footer>
-  <form action="" class="js-form" id="js-form" >
-    <input type="text" class="cmd_prompt form-control-sm" id="cmd_prompts"></input>
-  </form>
-</footer>
 `;
 
 class FileBrowserComponent extends HTMLElement {
@@ -284,16 +279,6 @@ class FileBrowserComponent extends HTMLElement {
             this.httpPostUpload();
         };
 
-        this.root.querySelector("#js-form").addEventListener('submit', e => {
-            e.preventDefault();
-            let command_line = this.root.querySelector("#cmd_prompts").value.split(" ", 2);
-            if (command_line.length == 2) {
-                this.httpPostCmdPrompt(command_line[0],command_line[1], null, null);
-            } else {
-                this.logEvent("error command hav to be 2 words");
-            }
-            return false;
-        });
         this.init_folder_structure(this.root, token);
     }
 
