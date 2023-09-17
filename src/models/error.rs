@@ -1,3 +1,4 @@
+use axum::extract::multipart::MultipartRejection;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
@@ -20,6 +21,8 @@ pub enum Error {
     FileNotFound,
     ParseFailInvalidWhiteList,
     ParseFailInvalidBlackList,
+    MultipartInvalidBoundary,
+    MultipartUnknownError,
 }
 
 impl Error {
@@ -38,6 +41,8 @@ impl Error {
             Self::InvalidAccessEscapeBaseDir
             | Self::InvalidFilePath
             | Self::InvalidFile
+            | Self::MultipartInvalidBoundary
+            | Self::MultipartUnknownError
             | Self::FileNotFound
             | Self::InvalidMimeType
             | Self::InvalidAccessDirectoryTraversal => {
@@ -49,6 +54,15 @@ impl Error {
                 StatusCode::INTERNAL_SERVER_ERROR,
                 ClientError::SERVICE_ERROR,
             ),
+        }
+    }
+}
+
+impl From<MultipartRejection> for Error {
+    fn from(rej: MultipartRejection) -> Self {
+        match rej {
+            MultipartRejection::InvalidBoundary(_) => Self::MultipartInvalidBoundary,
+            _ => Self::MultipartUnknownError,
         }
     }
 }
