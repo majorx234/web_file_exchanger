@@ -16,6 +16,7 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
+use axum_extra::extract::WithRejection;
 use http::{header, HeaderMap};
 // use path_absolutize::*;
 use serde_json::{json, Value};
@@ -135,7 +136,10 @@ async fn list_folder(_ctx: Ctx, Json(_fs_cmd): Json<FsCmd>) -> Result<Json<Vec<F
     Ok(Json(folder_structure))
 }
 
-async fn handler_upload(ctx: Ctx, mut multipart: Multipart) -> Result<Json<Value>> {
+async fn handler_upload(
+    ctx: Ctx,
+    WithRejection(mut multipart, _): WithRejection<Multipart, Error>,
+) -> Result<Json<Value>> {
     println!("->> {:12} - handler_upload", "HANDLER");
     while let Some(field) = multipart.next_field().await.unwrap() {
         let file_name = field.file_name().unwrap().to_string();
