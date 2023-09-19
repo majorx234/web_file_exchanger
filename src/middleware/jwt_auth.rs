@@ -37,10 +37,6 @@ pub fn parse_token(jwt_token: String) -> Result<(String, usize)> {
             ExpiredSignature => {
                 return Err(Error::AuthFailTokenExpired);
             }
-            _ => {
-                println! {"Error_message: {err}"};
-                return Err(Error::AuthFailTokenInvalid);
-            }
         },
     };
     // TODO Check if user exist in database

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{ConnectInfo, State},
+    extract::State,
     middleware,
     response::{Html, IntoResponse},
     routing::get,

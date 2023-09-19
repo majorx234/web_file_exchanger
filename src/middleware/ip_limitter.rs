@@ -1,9 +1,5 @@
-use crate::{
-    config::Config,
-    models::error::{Error, Result},
-};
-use async_trait::async_trait;
-use axum::{extract::FromRequestParts, http::Request, middleware::Next, response::Response};
+use crate::models::error::{Error, Result};
+use axum::{http::Request, middleware::Next, response::Response};
 use axum_client_ip::{InsecureClientIp, SecureClientIp, SecureClientIpSource};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
@@ -23,7 +19,10 @@ impl IpLimitter {
         }
     }
 
-    pub fn create_iplimit_from_str(ip_whitelist_str: &str, ip_blacklist_str: &str) -> Result<Self> {
+    pub fn create_iplimit_from_str(
+        ip_whitelist_str: &str,
+        _ip_blacklist_str: &str,
+    ) -> Result<Self> {
         let mut ip_whitelist = Vec::new();
         let mut ip_blacklist = Vec::new();
         let ip_list_fct =
