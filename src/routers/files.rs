@@ -106,7 +106,10 @@ pub async fn handler_list_files(_ctx: Ctx) -> Result<Json<Value>> {
     Ok(Json(json!({ "msg": "files will come later" })))
 }
 
-async fn list_folder(_ctx: Ctx, Json(_fs_cmd): Json<FsCmd>) -> Result<Json<Vec<FolderStructure>>> {
+async fn list_folder(
+    _ctx: Ctx,
+    WithRejection(Json(_fs_cmd), _): WithRejection<Json<FsCmd>, Error>,
+) -> Result<Json<Vec<FolderStructure>>> {
     let mut folder_structure: Vec<FolderStructure> = Vec::new();
     match _fs_cmd.cmd {
         Command::ls => {

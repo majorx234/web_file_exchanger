@@ -1,4 +1,4 @@
-use axum::extract::multipart::MultipartRejection;
+use axum::extract::{multipart::MultipartRejection, rejection::JsonRejection};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
@@ -23,6 +23,7 @@ pub enum Error {
     ParseFailInvalidBlackList,
     MultipartInvalidBoundary,
     MultipartUnknownError,
+    InvalidJson,
 }
 
 impl Error {
@@ -43,6 +44,7 @@ impl Error {
             | Self::InvalidFile
             | Self::MultipartInvalidBoundary
             | Self::MultipartUnknownError
+            | Self::InvalidJson
             | Self::FileNotFound
             | Self::InvalidMimeType
             | Self::InvalidAccessDirectoryTraversal => {
@@ -63,6 +65,14 @@ impl From<MultipartRejection> for Error {
         match rej {
             MultipartRejection::InvalidBoundary(_) => Self::MultipartInvalidBoundary,
             _ => Self::MultipartUnknownError,
+        }
+    }
+}
+
+impl From<JsonRejection> for Error {
+    fn from(rej: JsonRejection) -> Self {
+        match rej {
+            _ => Self::InvalidJson,
         }
     }
 }

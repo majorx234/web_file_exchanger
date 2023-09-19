@@ -9,6 +9,7 @@ use crate::{
 };
 
 use axum::{extract::State, routing::post, Json, Router};
+use axum_extra::extract::WithRejection;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::{json, Value};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -19,7 +20,7 @@ pub fn get_route() -> Router<ServerState> {
 
 pub async fn handler_login(
     State(server_state): State<ServerState>,
-    Json(user_login): Json<UserLogin>,
+    WithRejection(Json(user_login), _): WithRejection<Json<UserLogin>, Error>,
 ) -> Result<Json<Value>> {
     println!("->> {:12} - handler_login - {user_login:?}", "HANDLER");
     // TODO: Implement a real db/auth logic with JWT response
