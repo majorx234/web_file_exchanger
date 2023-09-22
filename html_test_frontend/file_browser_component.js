@@ -123,7 +123,7 @@ template.innerHTML = /*html*/ `
     <button type="button" class="btn btn-primary" id="upload_button">upload_file</button>
   </div>
 </nav>
-<main class="content">
+<main class="content" id="content">
   <div id="folder_details"></div>
   </div>
 </main>
@@ -228,7 +228,7 @@ class FileBrowserComponent extends HTMLElement {
         let fs_tree_list_tag = document.createElement("ul");
         let fs_details_list_tag = document.createElement("ul");
         fs_tree_list_tag.classList.add("folder");
-        fs_details_list_tag.classList.add("folder_details");
+        fs_details_list_tag.classList.add("folder_items");
         for (const fs_item in list_fs_json){
             let fs_item_name = list_fs_json[fs_item]["filename"];
             let fs_item_tag = document.createElement("li");
@@ -280,6 +280,28 @@ class FileBrowserComponent extends HTMLElement {
         };
 
         this.init_folder_structure(this.root, token);
+
+        let dropContainer = this.root.querySelector("#content");
+        // dragover and dragenter events need to have 'preventDefault' called
+        // in order for the 'drop' event to register.
+        // See: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Drag_operations#droptargets
+        dropContainer.ondragover = dropContainer.ondragenter = (evt) => {
+            evt.preventDefault();
+        };
+
+        dropContainer.ondrop = (evt) => {
+            let fileInput = this.root.querySelector("#upload_file_input");
+            fileInput.files = evt.dataTransfer.files;
+
+            // If you want to use some of the dropped files
+            const dT = new DataTransfer();
+            for( let file_idx = 0; file_idx < evt.dataTransfer.files.length;file_idx++) {
+                dT.items.add(evt.dataTransfer.files[file_idx]);
+            }
+            fileInput.files = dT.files;
+
+            evt.preventDefault();
+        };
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
