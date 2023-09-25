@@ -5,6 +5,7 @@ use serde::Deserialize;
 pub enum Command {
     ls,
     get,
+    find,
 }
 
 #[derive(Clone, Debug, Deserialize)]

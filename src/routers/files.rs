@@ -33,7 +33,7 @@ pub fn get_route() -> Router<ServerState> {
     Router::new()
         .route("/upload", post(handler_upload))
         .route("/files/*file_path", get(handler_get_file))
-        .route("/files", get(handler_list_files).post(list_folder))
+        .route("/files", get(handler_list_files).post(cmd_on_folder))
 }
 
 pub async fn handler_get_file(_ctx: Ctx, Path(file_path): Path<String>) -> impl IntoResponse {
@@ -106,7 +106,7 @@ pub async fn handler_list_files(_ctx: Ctx) -> Result<Json<Value>> {
     Ok(Json(json!({ "msg": "files will come later" })))
 }
 
-async fn list_folder(
+async fn cmd_on_folder(
     _ctx: Ctx,
     WithRejection(Json(_fs_cmd), _): WithRejection<Json<FsCmd>, Error>,
 ) -> Result<Json<Vec<FolderStructure>>> {
@@ -135,6 +135,7 @@ async fn list_folder(
             }
         }
         Command::get => (),
+        Command::find => (),
     };
     Ok(Json(folder_structure))
 }
