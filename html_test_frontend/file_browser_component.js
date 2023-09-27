@@ -118,8 +118,15 @@ template.innerHTML = /*html*/ `
 <nav class="nav">
   <br></br>
   <div class="d-flex flex-row align-items-center" data-bs-theme="light">
-    <label for="upload_file_input" class="form-label">Multiple files input example</label>
-    <input class="form-control form-control-sm" type="file" id="upload_file_input" multiple />
+    <label for="search_folder_input" class="form-label">search folder</label>
+    <input class="form-control form-control-sm" type="text" id="search_folder_input" >
+    </input>
+    <button type="button" class="btn btn-primary" id="search_button">search</button>
+  </div>
+  <div class="d-flex flex-row align-items-center" data-bs-theme="light">
+    <label for="upload_file_input" class="form-label">upload files</label>
+    <input class="form-control form-control-sm" type="file" id="upload_file_input" multiple>
+    </input>
     <button type="button" class="btn btn-primary" id="upload_button">upload_file</button>
   </div>
 </nav>
