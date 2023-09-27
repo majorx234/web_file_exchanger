@@ -32,13 +32,16 @@
   - OAuth2 support
 - put frontend login in own Web Component
 - Add drag & drop support and MIME features
-- add search in folder
+- improve searching folder
+  - search for files & folders
+  - interacting with result(onclick)
 
 # License
 - this software is distributed under GPLv3 ( see LICENSE)
 - use this software on your own risk, no warranties is given
 
 # History
+- 2023-09-28 - v0.3.0 Alpha Version with searching
 - 2023-08-06 - v0.2.0 Alpha Version with support of up-/downloading
 
 # References

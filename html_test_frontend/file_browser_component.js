@@ -1,5 +1,6 @@
 import {downloadFile, httpPostFetch} from "./http_operation.js";
-import * as bootstrap from "./bootstrap-5.3.1-dist/bootstrap.min.js"
+import  "./search_result_component.js";
+import * as bootstrap from "./bootstrap-5.3.1-dist/bootstrap.min.js";
 
 const template = document.createElement("template");
 template.innerHTML = /*html*/ `
@@ -190,6 +191,14 @@ class FileBrowserComponent extends HTMLElement {
         httpPostFetch("files", json_string, variable_context, response_handler, this._token);
     }
 
+    httpPostSearch() {
+        let search_string = this.root.querySelector("#search_folder_input").value;
+        let folder_browser_tag = this.root.querySelector("#folder_details");
+
+        this.logEvent("search for: " + search_string);
+        this.httpPostCmdPrompt("find", search_string, this.createSearchResult, folder_browser_tag);
+    }
+
     init_folder_structure() {
         // main part:
         // handle json: [{"filename":"README.md","is_folder":false,"children":null},...]
@@ -280,8 +289,20 @@ class FileBrowserComponent extends HTMLElement {
         return [fs_tree_list_tag, fs_details_list_tag];
     }
 
+    createSearchResult(json_data, base_tag) {
+        let search_result_tag = document.createElement("search-result-component");
+        search_result_tag.setAttribute("search_result", JSON.stringify(json_data));
+        base_tag.innerHTML = "";
+        base_tag.append(search_result_tag);
+    }
+
     connectedCallback() {
         let token = this._token;
+
+        this.root.querySelector("#search_button").onclick = () => {
+            this.httpPostSearch();
+        };
+
         this.root.querySelector("#upload_button").onclick = () => {
             this.httpPostUpload();
         };

@@ -2,12 +2,13 @@ const template = document.createElement("template");
 template.innerHTML = /*html*/ `
 <style>
 </style>
-<div id="content"></div>
+<h2>Search results:</h2>
+<div id="search_result"></div>
 </div>
 `;
 
 class SearchResultComponent extends HTMLElement {
-    static get observedAttributes() { return ['token']; }
+    static get observedAttributes() { return ['token', 'search_result']; }
     constructor() {
         super();
         this.search_result = null;
@@ -26,15 +27,17 @@ class SearchResultComponent extends HTMLElement {
 
     connectedCallback() {
         let result_tag = document.createElement("div");
-        result_tag.innerHTML = "nothing found";
+        result_tag.innerHTML =  "nothing found";
         if (this.search_result.length > 0) {
-            let result_tag = document.createElement("ul");
+            result_tag.innerHTML = "";
+            result_tag = document.createElement("ul");
             for (const result_index in this.search_result) {
                 let result_item = document.createElement("li");
-                result_item.innerHTML = this.search_result[result_index];
+                result_item.innerHTML = this.search_result[result_index]["filename"];
                 result_tag.append(result_item);
             }
         }
+        this.root.querySelector("#search_result").append(result_tag);
     }
 
     getSearchResults() {
