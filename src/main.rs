@@ -14,6 +14,7 @@ use web_file_exchanger::{
     backend::Backend,
     config::Config,
     database::{test_db::TestDb, DataBaseInterface},
+    file_indexer::FileIndex,
     middleware::{
         ctx_resolver::ctx_resolver, ip_limitter::ip_limitter, jwt_auth::auth,
         resource_mapper::response_mapper,
@@ -33,6 +34,7 @@ async fn main() {
         "Heinz".to_string(),
         "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6".to_string(),
     );
+    let file_index = FileIndex::create_index(config.get_file_store_dir_path());
 
     let backend = Backend::new();
     println!("web_file_exchanger_server: {}", backend.get_name());
@@ -40,7 +42,7 @@ async fn main() {
         "is Heinz in db? {}",
         dbi.compare_password(&"Heinz".to_string(), &"1234".to_string())
     );
-    let server_state = Arc::new(ServerElements::new(Box::new(dbi)));
+    let server_state = Arc::new(ServerElements::new(Box::new(dbi), Box::new(file_index)));
     let addr = config.get_host_socket_addr();
     println!("addr: {}", addr);
 

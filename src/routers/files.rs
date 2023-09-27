@@ -11,7 +11,7 @@ use crate::{
 };
 use axum::{
     body::StreamBody,
-    extract::{multipart::Multipart, Path},
+    extract::{multipart::Multipart, Path, State},
     response::IntoResponse,
     routing::{get, post},
     Json, Router,
@@ -108,12 +108,13 @@ pub async fn handler_list_files(_ctx: Ctx) -> Result<Json<Value>> {
 
 async fn cmd_on_folder(
     _ctx: Ctx,
-    WithRejection(Json(_fs_cmd), _): WithRejection<Json<FsCmd>, Error>,
+    State(server_state): State<ServerState>,
+    WithRejection(Json(fs_cmd), _): WithRejection<Json<FsCmd>, Error>,
 ) -> Result<Json<Vec<FolderStructure>>> {
     let mut folder_structure: Vec<FolderStructure> = Vec::new();
-    match _fs_cmd.cmd {
+    match fs_cmd.cmd {
         Command::ls => {
-            let relative_path = PathBuf::from_str(&_fs_cmd.path).unwrap();
+            let relative_path = PathBuf::from_str(&fs_cmd.path).unwrap();
             let mut full_path = PathBuf::new();
             full_path.push(Config::new().get_file_store_dir_path());
             full_path.push(relative_path.strip_prefix("/").unwrap());
@@ -135,7 +136,16 @@ async fn cmd_on_folder(
             }
         }
         Command::get => (),
-        Command::find => (),
+        Command::find => {
+            let relative_path = PathBuf::from_str(&fs_cmd.path).unwrap();
+            let file_name = relative_path.file_name();
+            if let Some(file_name) = file_name {
+                if let Some(file_name) = file_name.to_str() {
+                    let result = server_state.file_index.search(file_name);
+                    println!("{:?}", result);
+                }
+            }
+        }
     };
     Ok(Json(folder_structure))
 }
