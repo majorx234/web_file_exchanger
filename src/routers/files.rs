@@ -139,10 +139,21 @@ async fn cmd_on_folder(
         Command::find => {
             let relative_path = PathBuf::from_str(&fs_cmd.path).unwrap();
             let file_name = relative_path.file_name();
+            // println!("search for filename: {:?}", file_name);
+            // println!("file_index: {:?}", server_state.file_index);
             if let Some(file_name) = file_name {
                 if let Some(file_name) = file_name.to_str() {
-                    let result = server_state.file_index.search(file_name);
-                    println!("{:?}", result);
+                    if let Some(result) = server_state.file_index.search(file_name) {
+                        for item in result {
+                            // println!("search_result: {:?}", result);
+                            let folder_structure_item = FolderStructure {
+                                filename: item,
+                                is_folder: false,
+                                children: None,
+                            };
+                            folder_structure.push(folder_structure_item);
+                        }
+                    }
                 }
             }
         }

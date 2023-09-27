@@ -1,6 +1,7 @@
 use std::fs::{self};
 use std::path::{Path, PathBuf};
 
+#[derive(Debug)]
 pub struct FileIndex {
     file_paths: Vec<PathBuf>,
     file_names_and_idx: Vec<(String, usize)>,
@@ -33,9 +34,15 @@ impl FileIndex {
                 }
             }
         }
+        let mut file_names_and_idx = Vec::new();
+
+        file_index.iter().enumerate().for_each(|(idx, file_path)| {
+            let file_name = file_path.file_name().unwrap().to_str().unwrap().to_string();
+            file_names_and_idx.push((file_name, idx as usize));
+        });
         FileIndex {
             file_paths: file_index,
-            file_names_and_idx: Vec::new(),
+            file_names_and_idx,
         }
     }
 
