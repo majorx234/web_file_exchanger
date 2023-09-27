@@ -29,7 +29,12 @@ impl FileIndex {
                         continue;
                     }
                     if file_path.is_file() {
-                        file_index.push(file_path);
+                        file_index.push(
+                            file_path
+                                .strip_prefix(start_dir_path)
+                                .unwrap()
+                                .to_path_buf(),
+                        );
                     }
                 }
             }
