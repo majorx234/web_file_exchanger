@@ -33,7 +33,12 @@ class SearchResultComponent extends HTMLElement {
             result_tag = document.createElement("ul");
             for (const result_index in this.search_result) {
                 let result_item = document.createElement("li");
-                result_item.innerHTML = this.search_result[result_index]["filename"];
+                let filepath = this.search_result[result_index]["filename"];
+                let filename = filepath.split('/').pop();
+                result_item.innerHTML = filepath;
+                result_item.onclick = () => {
+                    this.selectEvent(result_index);
+                };
                 result_tag.append(result_item);
             }
         }

@@ -290,8 +290,21 @@ class FileBrowserComponent extends HTMLElement {
     }
 
     createSearchResult(json_data, base_tag) {
+        let search_result_list = json_data;
         let search_result_tag = document.createElement("search-result-component");
-        search_result_tag.setAttribute("search_result", JSON.stringify(json_data));
+        search_result_tag.setAttribute("search_result", JSON.stringify(search_result_list));
+        select_fct = (event) => {
+            let result_index = event.detail;
+            let clicked_item = search_result_list[result_index];
+            if (clicked_item["is_folder"]){
+                //todo open folder
+            } else {
+                let filepath = search_result_list[result_index]["filename"];
+                let filename = filepath.split('/').pop();
+                downloadFile(filepath, filename, this._token);
+            }
+         };
+        search_result_tag.addEventListener("select-event", select_fct);
         base_tag.innerHTML = "";
         base_tag.append(search_result_tag);
     }
