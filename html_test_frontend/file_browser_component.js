@@ -196,7 +196,7 @@ class FileBrowserComponent extends HTMLElement {
         let folder_browser_tag = this.root.querySelector("#folder_details");
 
         this.logEvent("search for: " + search_string);
-        this.httpPostCmdPrompt("find", search_string, this.createSearchResult, folder_browser_tag);
+        this.httpPostCmdPrompt("find", search_string, (json_data, base_tag) =>{this.createSearchResult(json_data, base_tag);}, folder_browser_tag);
     }
 
     init_folder_structure() {
@@ -251,7 +251,7 @@ class FileBrowserComponent extends HTMLElement {
             let fs_item_label = document.createElement("label");
             fs_item_label.innerHTML = fs_item_name;
 
-            if (list_fs_json[fs_item]["is_folder"]){
+            if (list_fs_json[fs_item]["is_folder"]) {
                 let fs_item_label_onlick_fct = (event) => {};
                 // fs_item_label.onclick = fs_item_label_onlick_fct;
 
@@ -293,14 +293,20 @@ class FileBrowserComponent extends HTMLElement {
         let search_result_list = json_data;
         let search_result_tag = document.createElement("search-result-component");
         search_result_tag.setAttribute("search_result", JSON.stringify(search_result_list));
-        select_fct = (event) => {
+        let select_fct = (event) => {
             let result_index = event.detail;
-            let clicked_item = search_result_list[result_index];
+            let clicked_item = search_result_list[result_index.index];
+            let filepath = clicked_item["filename"];
+            let filename = filepath.split('/').pop();
+
             if (clicked_item["is_folder"]){
                 //todo open folder
+                let folder_browser_tag = this.root.querySelector("#folder_details");
+                let list_fs_handler_function = (json_data, base_tag) => {
+                     this.createFolderDetails(json_data, base_tag, filepath + "/");
+                };
+                this.httpPostCmdPrompt("ls", filepath + "/", list_fs_handler_function, folder_browser_tag);
             } else {
-                let filepath = search_result_list[result_index]["filename"];
-                let filename = filepath.split('/').pop();
                 downloadFile(filepath, filename, this._token);
             }
          };
