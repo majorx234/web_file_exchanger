@@ -307,7 +307,7 @@ class FileBrowserComponent extends HTMLElement {
                 };
                 this.httpPostCmdPrompt("ls", filepath + "/", list_fs_handler_function, folder_browser_tag);
             } else {
-                downloadFile(filepath, filename, this._token);
+                downloadFile("files/" + filepath, filename, this._token);
             }
          };
         search_result_tag.addEventListener("select-event", select_fct);
