@@ -28,6 +28,8 @@
   - `cargo watch -q -c -w tests/ -x "test -- --nocapture"`
 
 # ToDo
+- extra file indexer, to create file_index beforehand
+  - start server afterwards with pathe to fileindex
 - login System for users via SQL database
   - OAuth2 support
 - put frontend login in own Web Component

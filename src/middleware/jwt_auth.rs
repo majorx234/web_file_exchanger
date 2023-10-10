@@ -9,6 +9,11 @@ use crate::{
 use axum::{http::Request, middleware::Next, response::Response};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 
+/// Checks for context and thus for extraction of jwt token and athorization
+/// * `ctx` ctx containing username
+/// * `request` http request
+/// * `Next` next middleware in chain
+/// * `returns` response dependend on next middlewarecheck
 pub async fn auth<B>(ctx: Result<Ctx>, req: Request<B>, next: Next<B>) -> Result<Response> {
     println!("->> {:<12} - auth", "MIDDELWARE");
     ctx?;
@@ -16,9 +21,10 @@ pub async fn auth<B>(ctx: Result<Ctx>, req: Request<B>, next: Next<B>) -> Result
 }
 
 /// Parse a token of format `base64(header).base64(payload).signature`
-/// - header :{"type":"jwt","alg":"HS256"}
-/// - payload: {"user":"<username","exp":"<exp-time>" }
-/// Returns (user_id, expiration)
+/// `header`  example: {"type":"jwt","alg":"HS256"}
+/// `payload` example: {"user":"<username","exp":"<exp-time>" }
+/// * `jwt_token` base64 encoded token
+/// * `returns` (user_id, expiration)
 pub fn parse_token(jwt_token: String) -> Result<(String, usize)> {
     let token_header = match jsonwebtoken::decode_header(&jwt_token) {
         Ok(token_header) => token_header,

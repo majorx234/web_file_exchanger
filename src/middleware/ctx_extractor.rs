@@ -7,6 +7,7 @@ use crate::{
     models::error::{Error, Result},
 };
 
+/// Extractor of ctx via From method
 #[async_trait]
 impl<S: Send + Sync> FromRequestParts<S> for Ctx {
     type Rejection = Error;

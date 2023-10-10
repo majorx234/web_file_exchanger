@@ -16,6 +16,7 @@ pub struct Config {
 }
 
 impl Config {
+    /// Config Constructor, reads env variables and sets config
     pub fn new() -> Config {
         let host_ip = std::env::var("HOST_IP").expect("HOST_IP not set");
         let port = std::env::var("PORT").expect("PORT not set");

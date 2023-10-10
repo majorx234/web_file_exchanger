@@ -27,6 +27,8 @@ pub enum Error {
 }
 
 impl Error {
+    /// Translate internal error into client error with less internal inrofmation
+    /// `returns` an http status code + the clienterror message
     pub fn client_status_and_error(&self) -> (StatusCode, ClientError) {
         // fallback maybe redundant
         #[allow(unreachable_patterns)]
@@ -61,6 +63,8 @@ impl Error {
 }
 
 impl From<MultipartRejection> for Error {
+    /// Creates internal error from from Multipart extractor rejection
+    /// * `rej` - the rejection of the Multipart extractor
     fn from(rej: MultipartRejection) -> Self {
         match rej {
             MultipartRejection::InvalidBoundary(_) => Self::MultipartInvalidBoundary,
@@ -70,10 +74,10 @@ impl From<MultipartRejection> for Error {
 }
 
 impl From<JsonRejection> for Error {
-    fn from(rej: JsonRejection) -> Self {
-        match rej {
-            _ => Self::InvalidJson,
-        }
+    /// Creates internal error from from Json extractor rejection
+    /// * `rej` - the rejection of the json extractor
+    fn from(_rej: JsonRejection) -> Self {
+        Self::InvalidJson
     }
 }
 
