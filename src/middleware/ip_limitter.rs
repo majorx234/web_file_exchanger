@@ -1,7 +1,7 @@
 use crate::models::error::{Error, Result};
 use axum::{http::Request, middleware::Next, response::Response};
-use axum_client_ip::{InsecureClientIp, SecureClientIp, SecureClientIpSource};
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use axum_client_ip::{InsecureClientIp, SecureClientIp};
+use std::net::Ipv4Addr;
 
 #[derive(Clone, Debug)]
 pub struct IpLimitter {
