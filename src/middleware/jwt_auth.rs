@@ -7,7 +7,7 @@ use crate::{
     },
 };
 use axum::{http::Request, middleware::Next, response::Response};
-use jsonwebtoken::{decode, DecodingKey, Validation};
+use jsonwebtoken::{self, decode, errors::ErrorKind, DecodingKey, Validation};
 
 /// Checks for context and thus for extraction of jwt token and athorization
 /// * `ctx` ctx containing username
@@ -39,11 +39,13 @@ pub fn parse_token(jwt_token: String) -> Result<(String, usize)> {
         &Validation::new(token_header.alg),
     ) {
         Ok(claims) => claims.claims,
-        Err(err) => match err {
-            ExpiredSignature => {
+        Err(err) => {
+            if *err.kind() == ErrorKind::ExpiredSignature {
                 return Err(Error::AuthFailTokenExpired);
+            } else {
+                return Err(Error::AuthFailTokenInvalid);
             }
-        },
+        }
     };
     // TODO Check if user exist in database
     /*
