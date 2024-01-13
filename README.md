@@ -28,6 +28,9 @@
   - `cargo watch -q -c -w tests/ -x "test -- --nocapture"`
 
 # ToDo
+- prepare security for pentesting
+- simplify files endpoint
+- append additional folder to file index
 - extra file indexer, to create file_index beforehand
   - start server afterwards with pathe to fileindex
 - login System for users via SQL database

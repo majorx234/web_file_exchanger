@@ -8,7 +8,7 @@ pub struct FileIndex {
 }
 
 impl FileIndex {
-    pub fn add_folder(mut self, folder_path: &Path) {
+    pub fn add_folder(self, _folder_path: &Path) {
         todo!("implement me");
     }
     pub fn add_file(mut self, file_path: &Path) {
