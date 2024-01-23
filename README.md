@@ -32,7 +32,7 @@
 - simplify files endpoint
 - append additional folder to file index
 - extra file indexer, to create file_index beforehand
-  - start server afterwards with pathe to fileindex
+  - start server afterwards with path to fileindex
 - login System for users via SQL database
   - OAuth2 support
 - put frontend login in own Web Component

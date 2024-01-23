@@ -1,12 +1,6 @@
 use std::sync::Arc;
 
-use axum::{
-    extract::State,
-    middleware,
-    response::{Html, IntoResponse},
-    routing::get,
-    Router,
-};
+use axum::{middleware, Router};
 use axum_client_ip::SecureClientIpSource;
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -20,7 +14,7 @@ use web_file_exchanger::{
         resource_mapper::response_mapper,
     },
     routers::{files, info, login, static_web_page},
-    server_state::{ServerElements, ServerState},
+    server_state::ServerElements,
 };
 
 use tower::ServiceBuilder;
@@ -37,13 +31,9 @@ async fn main() {
     let file_index = FileIndex::create_index(config.get_file_store_dir_path());
 
     let backend = Backend::new();
-    println!("web_file_exchanger_server: {}", backend.get_name());
-    println!(
-        "is Heinz in db? {}",
-        dbi.compare_password(&"Heinz".to_string(), &"1234".to_string())
-    );
     let server_state = Arc::new(ServerElements::new(Box::new(dbi), Box::new(file_index)));
     let addr = config.get_host_socket_addr();
+    println!("web_file_exchanger_server: {}", backend.get_name());
     println!("addr: {}", addr);
 
     tracing_subscriber::registry()
@@ -60,7 +50,6 @@ async fn main() {
         .route_layer(SecureClientIpSource::ConnectInfo.into_extension());
 
     let routes_all = Router::new()
-        .route("/hello", get(handler_hello))
         .merge(login::get_route())
         .merge(router_secure)
         .merge(static_web_page::frontend())
@@ -76,9 +65,4 @@ async fn main() {
         .serve(routes_all.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .expect("failed to start server");
-}
-
-async fn handler_hello(State(_server_state): State<ServerState>) -> impl IntoResponse {
-    println!("->> {:12} - handler_hello", "HANDLER");
-    Html("hello, world")
 }
