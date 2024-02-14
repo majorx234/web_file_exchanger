@@ -1,7 +1,12 @@
 # Usecase:
 - ![Alt text](usecase.png?raw=true "user want to exchange files")
+- Server can be hosted as a file server
+- Configuration via ENV-Vars
+- ToDO: need configuration file for Users and shared folder (still hardcoded)
 # Sequencediagram:
 - ![Alt text](sequence_diagram_user_interaction.png?raw=true "user login and access root directory")
+- JWT Token Based authorization Process
+- ToDo: need refresh token mechanism
 # Frontend view:
 - ![Alt text](frontend_view.png?raw=true "html frontend with login area and file browser")
 # endpoints
