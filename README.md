@@ -1,6 +1,12 @@
 # Info
-- Webserver to uploade/download files
-- WIP
+- webserver to uploade/download files
+- idea is a simple file exchange with user/password security
+- server can provide shared folder over website
+- webusers can up download files and folders
+- webusers can search for files
+
+# more documentation:
+[link](documentation/README.md)
 
 # Build
 - `cargo build`
