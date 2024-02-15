@@ -1,11 +1,18 @@
 # Usecase:
 - ![Alt text](usecase.png?raw=true "user want to exchange files")
-- Server can be hosted as a file server
+- file server with Webfrontend
+- users can search, upload and download files over webfrontend
+- users need login
+- folder shares are configurated by server admin
 - Configuration via ENV-Vars
 - ToDO: need configuration file for Users and shared folder (still hardcoded)
+
 # Sequencediagram:
 - ![Alt text](sequence_diagram_user_interaction.png?raw=true "user login and access root directory")
 - JWT Token Based authorization Process
+- after login via username/password a JsonWebToken is given out to frontend
+  - in all further requests (for file handling) these token is submitted in http-header
+  - thus further requests are checked for authorization
 - ToDo: need refresh token mechanism
 # Frontend view:
 - ![Alt text](frontend_view.png?raw=true "html frontend with login area and file browser")
