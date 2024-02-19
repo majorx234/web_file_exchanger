@@ -6,7 +6,7 @@
 - webusers can search for files
 
 # more documentation:
-[link](documentation/README.md)
+[documentation/README.md](documentation/README.md)
 
 # Build
 - `cargo build`
@@ -35,7 +35,7 @@
 
 # ToDo
 - prepare security for pentesting
-  - own repo: https://github.com/majorx234/web_file_exchanger
+  - own repo: https://github.com/majorx234/web_file_exchanger_pentest
 - simplify files endpoint
 - append additional folder to file index
 - extra file indexer, to create file_index beforehand
