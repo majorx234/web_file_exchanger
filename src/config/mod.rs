@@ -30,6 +30,8 @@ pub struct Config {
     pub jwt_secret: String,
     pub jwt_expire_time: Duration,
     pub rust_log: String,
+    pub username: String,
+    pub password_hash: String,
 }
 
 impl Config {
@@ -43,6 +45,8 @@ impl Config {
 
         let frontend_dir = std::env::var("FRONTEND_DIR").expect("FRONTEND_DIR not set");
 
+        let username = std::env::var("USERNAME").expect("USERNAME not set");
+        let password_hash = std::env::var("PASSWORD_HASH").expect("PASSWORD_HASH not set");
         let mut frontend_dir_path = PathBuf::new();
         frontend_dir_path.push(frontend_dir);
         match frontend_dir_path.is_absolute() {
@@ -64,6 +68,8 @@ impl Config {
             jwt_secret,
             jwt_expire_time: Duration::seconds(jwt_expire_time.parse::<i64>().unwrap()),
             rust_log,
+            username,
+            password_hash,
         }
     }
     pub fn get_host_socket_addr(&self) -> SocketAddr {
@@ -79,5 +85,13 @@ impl Config {
 
     pub fn get_rust_log(&self) -> &str {
         &self.rust_log
+    }
+
+    pub fn get_username(&self) -> &str {
+        &self.username
+    }
+
+    pub fn get_password_hash(&self) -> &str {
+        &self.password_hash
     }
 }

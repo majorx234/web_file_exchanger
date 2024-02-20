@@ -42,8 +42,8 @@ async fn main() {
     let config = Config::new();
     let mut dbi = TestDb::new();
     dbi.add(
-        "Heinz".to_string(),
-        "f4d3ad4f524a2c260f3220d954abb08b7953a9a3998fd46a8a221c2bb2acf3c6".to_string(),
+        config.get_username().to_string(),
+        config.get_password_hash().to_string(),
     );
     let file_index = FileIndex::create_index(config.get_file_store_dir_path());
 
