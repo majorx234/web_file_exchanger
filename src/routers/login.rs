@@ -45,8 +45,9 @@ pub async fn handler_login(
         .dbi
         .compare_password(user_login.get_user_name(), user_login.get_password_hash())
     {
-        let elapse_since_epoch =
-            (SystemTime::now() + Duration::from_secs(300)).duration_since(UNIX_EPOCH);
+        let elapse_since_epoch = (SystemTime::now()
+            + Duration::from_secs(Config::new().get_token_expire_time()))
+        .duration_since(UNIX_EPOCH);
 
         let claims = Claims {
             user: user_login.get_user_name().to_string(),

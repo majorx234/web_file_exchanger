@@ -32,6 +32,7 @@ pub struct Config {
     pub rust_log: String,
     pub username: String,
     pub password_hash: String,
+    pub token_expire_time: u64,
 }
 
 impl Config {
@@ -47,6 +48,9 @@ impl Config {
 
         let username = std::env::var("USERNAME").expect("USERNAME not set");
         let password_hash = std::env::var("PASSWORD_HASH").expect("PASSWORD_HASH not set");
+
+        let token_expire_time =
+            std::env::var("TOKEN_EXPIRE_TIME").expect("TOKEN_EXPIRE_TIME not set");
         let mut frontend_dir_path = PathBuf::new();
         frontend_dir_path.push(frontend_dir);
         match frontend_dir_path.is_absolute() {
@@ -61,7 +65,7 @@ impl Config {
             std::env::var("RUST_LOG").unwrap_or_else(|_| "todo_axum=debug,tower_http=debug".into());
         Config {
             host_ip,
-            port: port.parse::<u32>().unwrap(),
+            port: port.parse::<u32>().expect("PORT not parsable"),
             database_url,
             frontend_dir_path,
             file_store_dir_path: file_store_dir.into(),
@@ -70,6 +74,9 @@ impl Config {
             rust_log,
             username,
             password_hash,
+            token_expire_time: token_expire_time
+                .parse::<u64>()
+                .expect("TOKEN_EXPIRE_TIME not parsable"),
         }
     }
     pub fn get_host_socket_addr(&self) -> SocketAddr {
@@ -93,5 +100,9 @@ impl Config {
 
     pub fn get_password_hash(&self) -> &str {
         &self.password_hash
+    }
+
+    pub fn get_token_expire_time(&self) -> u64 {
+        self.token_expire_time
     }
 }
