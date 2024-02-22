@@ -16,7 +16,11 @@
  */
 
 use crate::{ctx::Ctx, models::error::Result, server_state::ServerState};
-use axum::{extract::Query, routing::get, Json, Router};
+use axum::{
+    extract::{DefaultBodyLimit, Query},
+    routing::get,
+    Json, Router,
+};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
@@ -26,7 +30,9 @@ pub struct Info {
 }
 
 pub fn get_route() -> Router<ServerState> {
-    Router::new().route("/info", get(handler_info))
+    Router::new()
+        .route("/info", get(handler_info))
+        .layer(DefaultBodyLimit::max(1024))
 }
 
 pub async fn handler_info(ctx: Ctx, Query(params): Query<Info>) -> Result<Json<Value>> {

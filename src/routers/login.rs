@@ -25,14 +25,20 @@ use crate::{
     server_state::ServerState,
 };
 
-use axum::{extract::State, routing::post, Json, Router};
+use axum::{
+    extract::{DefaultBodyLimit, State},
+    routing::post,
+    Json, Router,
+};
 use axum_extra::extract::WithRejection;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::{json, Value};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 pub fn get_route() -> Router<ServerState> {
-    Router::new().route("/login", post(handler_login))
+    Router::new()
+        .route("/login", post(handler_login))
+        .layer(DefaultBodyLimit::max(1024))
 }
 
 pub async fn handler_login(
