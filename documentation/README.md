@@ -15,7 +15,7 @@
   - thus further requests are checked for authorization
 - ToDo: need refresh token mechanism
 # Frontend view:
-- ![Alt text](frontend_view.png?raw=true "html frontend with login area and file browser")
+- ![Alt text](frontend_view_explained.png?raw=true "html frontend with login area and file browser")
 # endpoints
 - login
   - request:
