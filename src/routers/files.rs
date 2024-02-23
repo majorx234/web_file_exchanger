@@ -51,7 +51,6 @@ pub fn get_route() -> Router<ServerState> {
         .route("/upload", post(handler_upload))
         .route("/files/*file_path", get(handler_get_file))
         .route("/files", get(handler_list_files).post(cmd_on_folder))
-        .layer(DefaultBodyLimit::max(2048))
 }
 
 pub async fn handler_get_file(_ctx: Ctx, Path(file_path): Path<String>) -> impl IntoResponse {
