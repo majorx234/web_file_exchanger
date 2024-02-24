@@ -39,7 +39,9 @@ impl Config {
     /// Config Constructor, reads env variables and sets config
     pub fn new() -> Config {
         let host_ip = std::env::var("HOST_IP").expect("HOST_IP not set");
-        let port = std::env::var("PORT").expect("PORT not set");
+        let port = std::env::var("PORT").map_or(8080, |port_string| {
+            port_string.parse::<u32>().expect("PORT not parsable")
+        });
         let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET not set");
         let jwt_expire_time = std::env::var("JWT_EXPIRE_TIME").expect("JWT_EXPIRE_TIME not set");
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set");
@@ -50,7 +52,11 @@ impl Config {
         let password_hash = std::env::var("PASSWORD_HASH").expect("PASSWORD_HASH not set");
 
         let token_expire_time =
-            std::env::var("TOKEN_EXPIRE_TIME").expect("TOKEN_EXPIRE_TIME not set");
+            std::env::var("TOKEN_EXPIRE_TIME").map_or(600, |toke_expire_time_string| {
+                toke_expire_time_string
+                    .parse::<u64>()
+                    .expect("TOKEN_EXPIRE_TIME not parsable")
+            });
         let mut frontend_dir_path = PathBuf::new();
         frontend_dir_path.push(frontend_dir);
         match frontend_dir_path.is_absolute() {
@@ -65,7 +71,7 @@ impl Config {
             std::env::var("RUST_LOG").unwrap_or_else(|_| "todo_axum=debug,tower_http=debug".into());
         Config {
             host_ip,
-            port: port.parse::<u32>().expect("PORT not parsable"),
+            port,
             database_url,
             frontend_dir_path,
             file_store_dir_path: file_store_dir.into(),
@@ -74,9 +80,7 @@ impl Config {
             rust_log,
             username,
             password_hash,
-            token_expire_time: token_expire_time
-                .parse::<u64>()
-                .expect("TOKEN_EXPIRE_TIME not parsable"),
+            token_expire_time,
         }
     }
     pub fn get_host_socket_addr(&self) -> SocketAddr {
