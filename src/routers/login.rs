@@ -33,7 +33,7 @@ use axum::{
 use axum_extra::extract::WithRejection;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde_json::{json, Value};
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn get_route() -> Router<ServerState> {
     Router::new()
@@ -51,9 +51,8 @@ pub async fn handler_login(
         .dbi
         .compare_password(user_login.get_user_name(), user_login.get_password_hash())
     {
-        let elapse_since_epoch = (SystemTime::now()
-            + Duration::from_secs(Config::new().get_token_expire_time()))
-        .duration_since(UNIX_EPOCH);
+        let elapse_since_epoch =
+            (SystemTime::now() + Config::new().get_jwt_expire_time()).duration_since(UNIX_EPOCH);
 
         let claims = Claims {
             user: user_login.get_user_name().to_string(),

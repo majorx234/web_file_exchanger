@@ -15,10 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use chrono::Duration;
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use std::time::Duration;
 
 #[derive(Clone, Debug)]
 pub struct Config {
@@ -32,7 +32,6 @@ pub struct Config {
     pub rust_log: String,
     pub username: String,
     pub password_hash: String,
-    pub token_expire_time: u64,
 }
 
 impl Config {
@@ -43,7 +42,15 @@ impl Config {
             port_string.parse::<u32>().expect("PORT not parsable")
         });
         let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET not set");
-        let jwt_expire_time = std::env::var("JWT_EXPIRE_TIME").expect("JWT_EXPIRE_TIME not set");
+        let jwt_expire_time = Duration::from_secs(std::env::var("JWT_EXPIRE_TIME").map_or(
+            600,
+            |toke_expire_time_string| {
+                toke_expire_time_string
+                    .parse::<u64>()
+                    .expect("JWT_EXPIRE_TIME not parsable")
+            },
+        ));
+
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set");
 
         let frontend_dir = std::env::var("FRONTEND_DIR").expect("FRONTEND_DIR not set");
@@ -51,12 +58,6 @@ impl Config {
         let username = std::env::var("USERNAME").expect("USERNAME not set");
         let password_hash = std::env::var("PASSWORD_HASH").expect("PASSWORD_HASH not set");
 
-        let token_expire_time =
-            std::env::var("TOKEN_EXPIRE_TIME").map_or(600, |toke_expire_time_string| {
-                toke_expire_time_string
-                    .parse::<u64>()
-                    .expect("TOKEN_EXPIRE_TIME not parsable")
-            });
         let mut frontend_dir_path = PathBuf::new();
         frontend_dir_path.push(frontend_dir);
         match frontend_dir_path.is_absolute() {
@@ -76,17 +77,18 @@ impl Config {
             frontend_dir_path,
             file_store_dir_path: file_store_dir.into(),
             jwt_secret,
-            jwt_expire_time: Duration::seconds(jwt_expire_time.parse::<i64>().unwrap()),
+            jwt_expire_time,
             rust_log,
             username,
             password_hash,
-            token_expire_time,
         }
     }
     pub fn get_host_socket_addr(&self) -> SocketAddr {
         SocketAddr::from_str(&format!("{}:{}", self.host_ip, self.port)[..]).unwrap()
     }
-
+    pub fn get_jwt_expire_time(&self) -> Duration {
+        self.jwt_expire_time
+    }
     pub fn get_frontend_dir_path(&self) -> &Path {
         self.frontend_dir_path.as_path()
     }
@@ -104,9 +106,5 @@ impl Config {
 
     pub fn get_password_hash(&self) -> &str {
         &self.password_hash
-    }
-
-    pub fn get_token_expire_time(&self) -> u64 {
-        self.token_expire_time
     }
 }
